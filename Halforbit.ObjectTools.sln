@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halforbit.ObjectTools", "Ha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halforbit.ObjectTools.Tests", "Halforbit.ObjectTools.Tests\Halforbit.ObjectTools.Tests.csproj", "{F23D0C78-B5B9-4037-9001-DD0593980458}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50116D58-2D21-41AA-A89C-18E1EB88D9E4}"
+	ProjectSection(SolutionItems) = preProject
+		readme.md = readme.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
