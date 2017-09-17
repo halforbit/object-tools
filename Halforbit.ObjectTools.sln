@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halforbit.ObjectTools", "Halforbit.ObjectTools\Halforbit.ObjectTools.csproj", "{9E067D80-3674-421B-8D2D-5DE43F62983B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halforbit.ObjectTools.Tests", "Halforbit.ObjectTools.Tests\Halforbit.ObjectTools.Tests.csproj", "{F23D0C78-B5B9-4037-9001-DD0593980458}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9E067D80-3674-421B-8D2D-5DE43F62983B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E067D80-3674-421B-8D2D-5DE43F62983B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E067D80-3674-421B-8D2D-5DE43F62983B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E067D80-3674-421B-8D2D-5DE43F62983B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F23D0C78-B5B9-4037-9001-DD0593980458}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F23D0C78-B5B9-4037-9001-DD0593980458}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F23D0C78-B5B9-4037-9001-DD0593980458}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F23D0C78-B5B9-4037-9001-DD0593980458}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE71ADE2-E1CA-411E-AFC4-D368FB15BCB9}
+	EndGlobalSection
+EndGlobal

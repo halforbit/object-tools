@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard1.2</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Halforbit</Authors>
+    <Company>Halforbit</Company>
+    <Description>This is a small collection of tools for manipulating objects.</Description>
+    <PackageProjectUrl>http://github.com/halforbit/object-tools</PackageProjectUrl>
+    <RepositoryUrl>http://github.com/halforbit/object-tools</RepositoryUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="InvariantExtraction\Extensions\" />
+  </ItemGroup>
+
+</Project>

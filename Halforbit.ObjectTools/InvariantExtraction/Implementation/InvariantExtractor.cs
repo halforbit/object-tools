@@ -1,0 +1,39 @@
+﻿using Halforbit.ObjectTools.Extensions;
+using Halforbit.ObjectTools.InvariantExtraction.Interface;
+using Halforbit.ObjectTools.ObjectBuild.Implementation;
+using System;
+using System.Linq.Expressions;
+
+namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
+
+{
+    public class InvariantExtractor : IInvariantExtractor
+    {
+        public TObject ExtractInvariants<TObject>(
+            Expression<Func<TObject, bool>> inputExpression, 
+            out Expression<Func<TObject, bool>> invariantExpression,
+            TObject cloneSource = default(TObject))
+        {
+            var visitor = new InvariantFindingExpressionVisitor<TObject>(cloneSource);
+
+            invariantExpression = visitor
+                .Visit(inputExpression) 
+                as Expression<Func<TObject, bool>>;
+
+            var invariantObjectBuilder = cloneSource.IsDefaultValue() ?
+                new Builder<TObject>() :
+                new Builder<TObject>(cloneSource);
+
+            foreach (var memberValue in visitor.MemberValues)
+            {
+                var propertyInfo = memberValue.Item1;
+
+                var value = memberValue.Item2;
+
+                invariantObjectBuilder.Set(propertyInfo.Name, value);
+            }
+
+            return invariantObjectBuilder.Build();
+        }
+    }
+}
