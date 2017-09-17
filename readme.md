@@ -2,11 +2,11 @@
 
 This is a small collection of tools for manipulating objects.
 
-**[Invariant Extraction](Halforbit.ObjectTools/InvariantExtraction/invariant-extraction.md)**
+- **[Invariant Extraction](Halforbit.ObjectTools/InvariantExtraction/invariant-extraction.md)** - Extract a typed object with the invariant values from a lambda expression.
 
-**[Object Build](Halforbit.ObjectTools/ObjectBuild/object-build.md)**
+- **[Object Build](Halforbit.ObjectTools/ObjectBuild/object-build.md)** - Build, clone, and mutate mutable and immutable objects.
 
-**[Object String Map](Halforbit.ObjectTools/ObjectStringMap/object-string-map.md)**
+- **[Object String Map](Halforbit.ObjectTools/ObjectStringMap/object-string-map.md)** - Use a text map to turn simple objects into strings and back again. 
 
 ## Nuget
 
