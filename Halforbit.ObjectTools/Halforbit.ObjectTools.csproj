@@ -8,6 +8,7 @@
     <Description>This is a small collection of tools for manipulating objects.</Description>
     <PackageProjectUrl>http://github.com/halforbit/object-tools</PackageProjectUrl>
     <RepositoryUrl>http://github.com/halforbit/object-tools</RepositoryUrl>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
