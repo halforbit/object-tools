@@ -33,6 +33,32 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenString_WildcardTail_ThenSuccess()
+        {
+            var map = new StringMap<string>("alfa/{*this}");
+
+            var str = map.Map("alfa/charlie/delta/bravo.jpg");
+
+            Assert.Equal(
+                "charlie/delta/bravo.jpg",
+                str);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WildcardTail_ThenSuccess()
+        {
+            var key = "charlie/delta/bravo.jpg";
+
+            var map = new StringMap<string>("alfa/{*this}");
+
+            var str = map.Map(key, allowPartialMap: false);
+
+            Assert.Equal(
+                $"alfa/{key}",
+                str);
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapObject_WhenDateTime_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(

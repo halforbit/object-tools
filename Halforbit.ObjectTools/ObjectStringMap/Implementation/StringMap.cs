@@ -131,6 +131,11 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                 var name = nodeMatch.Groups[NameGroupKey].Value;
 
+                if(name.StartsWith("*"))
+                {
+                    name = name.Substring(1);
+                }
+
                 var format = nodeMatch.Groups[FormatGroupKey].Value;
 
                 var value = obj != null ? 
@@ -216,6 +221,11 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
         static string ResolvePattern(string name, int slashCount)
         {
+            if(name.StartsWith("*"))
+            {
+                return $"(?<{name.Substring(1)}>.*)";
+            }
+
             if(slashCount == 0)
             {
                 return $"(?<{name}>[^/]*)";
