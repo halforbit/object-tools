@@ -8,11 +8,15 @@
     <Description>This is a small collection of tools for manipulating objects.</Description>
     <PackageProjectUrl>http://github.com/halforbit/object-tools</PackageProjectUrl>
     <RepositoryUrl>http://github.com/halforbit/object-tools</RepositoryUrl>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="InvariantExtraction\Extensions\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
   </ItemGroup>
 
 </Project>
