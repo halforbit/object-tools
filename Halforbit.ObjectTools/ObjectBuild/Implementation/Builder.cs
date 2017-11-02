@@ -1,13 +1,11 @@
-﻿using Halforbit.ObjectTools.ObjectBuild.Interface;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
 namespace Halforbit.ObjectTools.ObjectBuild.Implementation
 {
-    public class Builder<TObject> :
-        IBuilder<TObject>
+    public class Builder<TObject>
     {
         readonly ConcurrentDictionary<string, object> _propertyValues = 
             new ConcurrentDictionary<string, object>();
@@ -28,14 +26,14 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
             return Factory<TObject>.Build(_propertyValues, Source);
         }
 
-        public IBuilder<TObject> Set<TPropertyType>(
+        public Builder<TObject> Set<TPropertyType>(
             Expression<Func<TObject, TPropertyType>> propertyExpression, 
             Func<TObject, TPropertyType> valueProvider)
         {
             throw new NotImplementedException();
         }
 
-        public IBuilder<TObject> Set<TPropertyType>(
+        public Builder<TObject> Set<TPropertyType>(
             Expression<Func<TObject, TPropertyType>> propertyExpression, 
             TPropertyType value)
         {
@@ -46,14 +44,14 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
             return this;
         }
 
-        public IBuilder<TObject> Set<TPropertyType>(
+        public Builder<TObject> Set<TPropertyType>(
             string propertyName, 
             Func<TObject, TPropertyType> valueProvider)
         {
             throw new NotImplementedException();
         }
 
-        public IBuilder<TObject> Set<TTPropertyType>(
+        public Builder<TObject> Set<TTPropertyType>(
             string propertyName, 
             TTPropertyType value)
         {
@@ -75,6 +73,11 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
             throw new ArgumentException(
                 "Expression is not a member access", 
                 "expression");
+        }
+
+        public static implicit operator TObject(Builder<TObject> builder)
+        {
+            return builder.Build();
         }
     }
 }
