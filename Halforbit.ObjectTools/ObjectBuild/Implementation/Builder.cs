@@ -79,14 +79,5 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
         {
             return builder.Build();
         }
-
-    }
-
-    public static class Builder
-    {
-        public static Builder<TObject> Mutate<TObject>(this TObject source)
-        {
-            return new Builder<TObject>(source);
-        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Halforbit.ObjectTools.Collections;
+using Halforbit.ObjectTools.ObjectBuild.Implementation;
 using System;
 using System.Collections.Generic;
 
@@ -68,6 +69,11 @@ namespace Halforbit.ObjectTools.Extensions
             }
 
             return false;
+        }
+
+        public static Builder<TObject> Mutate<TObject>(this TObject source)
+        {
+            return new Builder<TObject>(source);
         }
     }
 }
