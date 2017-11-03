@@ -5,7 +5,6 @@ using System;
 using System.Linq.Expressions;
 
 namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
-
 {
     public class InvariantExtractor : IInvariantExtractor
     {
