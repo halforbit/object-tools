@@ -85,9 +85,13 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             {
                 var builder = new Builder<TObject>();
 
-                foreach (var property in typeof(TObject).GetTypeInfo().DeclaredProperties)
+                var typeInfo = typeof(TObject).GetTypeInfo();
+
+                foreach(var name in parseInfo.Regex.GetGroupNames())
                 {
-                    var name = property.Name;
+                    if (int.TryParse(name, out var i)) continue;
+
+                    var property = typeInfo.GetProperty(name);
 
                     var value = match.Groups[name].Value;
 
@@ -98,7 +102,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                         value,
                         format);
 
-                    if(typedValue == null)
+                    if (typedValue == null)
                     {
                         return default(TObject);
                     }
@@ -189,7 +193,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             {
                 value = typeof(TObject)
                     .GetTypeInfo()
-                    .DeclaredProperties
+                    .GetProperties()
                     .Single(p => p.Name == name)
                     .GetValue(obj);
             }

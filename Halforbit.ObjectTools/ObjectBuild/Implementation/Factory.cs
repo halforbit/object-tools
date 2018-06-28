@@ -55,7 +55,7 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                 .Single(m => m.Name == "GetOrAdd" && 
                     m.GetParameters().Skip(1).First().ParameterType == typeof(object));
 
-            var properties = typeInfo.DeclaredProperties
+            var properties = typeInfo.GetProperties()
                 .ToDictionary(p => p.Name.ToLower(), p => p);
 
             var propertiesToSet = properties
@@ -130,7 +130,7 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                             Expression.Default(propertyType),
                             Expression.Property(
                                 sourceParameter,
-                                propertyInfo.GetMethod)),
+                                propertyInfo)),
                         typeof(object))),
                 propertyType);
         }
