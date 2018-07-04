@@ -324,7 +324,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             }
 
             var regex = new Regex(
-                pattern.ToString(),
+                $"^{pattern}$",
                 RegexOptions.None);// RegexOptions.Compiled);
 
             return new ParseInfo(formats, regex);

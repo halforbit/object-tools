@@ -17,6 +17,16 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             DateTimeKind.Utc);
 
         [Fact, Trait("Type", "Unit")]
+        public void MapObject_NonFullMatch_ThenNull()
+        {
+            var map = new StringMap<ExchangeCurrencyPairTimeKey>("apples/{Exchange}/oranges");
+
+            var result = map.Map("/apples/bitstamp/oranges");
+
+            Assert.Null(result);
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapObject_WhenString_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
