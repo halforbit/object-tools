@@ -178,6 +178,8 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             return _parseInfo.Value.Regex.IsMatch(str);
         }
 
+        public Regex Regex => _parseInfo.Value.Regex;
+
         static string ResolveValue(
             TObject obj, 
             string name,

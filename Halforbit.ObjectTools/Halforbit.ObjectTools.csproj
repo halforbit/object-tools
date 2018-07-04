@@ -8,7 +8,15 @@
     <Description>This is a small collection of tools for manipulating objects.</Description>
     <PackageProjectUrl>http://github.com/halforbit/object-tools</PackageProjectUrl>
     <RepositoryUrl>http://github.com/halforbit/object-tools</RepositoryUrl>
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
