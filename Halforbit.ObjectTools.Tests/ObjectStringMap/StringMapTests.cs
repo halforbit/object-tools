@@ -17,16 +17,6 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             DateTimeKind.Utc);
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_NonFullMatch_ThenNull()
-        {
-            var map = new StringMap<ExchangeCurrencyPairTimeKey>("apples/{Exchange}/oranges");
-
-            var result = map.Map("/apples/bitstamp/oranges");
-
-            Assert.Null(result);
-        }
-
-        [Fact, Trait("Type", "Unit")]
         public void MapObject_WhenString_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
@@ -275,6 +265,28 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             var str = "alfa/ff14cea6a92c4a82bd8478c3d17220d2/charlie";
 
             Assert.False(map.IsMatch(str));
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_NonFullMatch_ThenNull()
+        {
+            var map = new StringMap<ExchangeCurrencyPairTimeKey>("apples/{Exchange}/oranges");
+
+            var result = map.Map("/apples/bitstamp/oranges");
+
+            Assert.Null(result);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_ValueTuple_ThenSuccess()
+        {
+            var map = new StringMap<(double X, double Y)>("apples/{Item1}/{Item2}/oranges");
+
+            var (x, y) = map.Map("apples/3.14/123/oranges");
+
+            Assert.Equal(3.14, x);
+
+            Assert.Equal(123, y);
         }
 
         [Fact, Trait("Type", "Speed")]

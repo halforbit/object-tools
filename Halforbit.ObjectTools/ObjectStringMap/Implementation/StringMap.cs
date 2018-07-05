@@ -93,12 +93,14 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                     var property = typeInfo.GetProperty(name);
 
+                    var field = typeInfo.GetField(name);
+
                     var value = match.Groups[name].Value;
 
                     format = parseInfo.Formats.TryGetValue(name, out format) ? format : null;
 
                     var typedValue = ConvertStringToType(
-                        property.PropertyType,
+                        property?.PropertyType ?? field?.FieldType,
                         value,
                         format);
 
@@ -107,7 +109,9 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                         return default(TObject);
                     }
 
-                    builder.Set(property.Name, typedValue);
+                    builder.Set(
+                        property?.Name ?? field?.Name, 
+                        typedValue);
                 }
 
                 obj = builder.Build();

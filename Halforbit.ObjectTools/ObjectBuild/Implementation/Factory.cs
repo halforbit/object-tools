@@ -46,10 +46,6 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
 
             var concurrentDictionaryType = typeof(ConcurrentDictionary<string, object>).GetTypeInfo();
 
-            var xx = concurrentDictionaryType
-                .DeclaredMethods
-                .Where(m => m.Name == "GetOrAdd").ToList();
-
             var getOrAddMethodInfo = concurrentDictionaryType
                 .DeclaredMethods
                 .Single(m => m.Name == "GetOrAdd" && 
@@ -62,18 +58,33 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                 .Where(p => p.Value.SetMethod != null)
                 .ToDictionary(p => p.Key, p => p.Value);
 
+            var fields = typeInfo.GetFields()
+                .ToDictionary(f => f.Name.ToLower(), f => f);
+
             foreach (var parameter in constructor.Parameters)
             {
                 var key = parameter.Name.ToLower();
 
-                var propertyType = parameter.ParameterType;
+                var parameterType = parameter.ParameterType;
 
-                arguments.Add(BuildArgumentExpression(
-                    dictionaryParameter,
-                    sourceParameter,
-                    getOrAddMethodInfo,
-                    key,
-                    properties[key]));
+                if(properties.Any())
+                {
+                    arguments.Add(BuildPropertyArgumentExpression(
+                        dictionaryParameter,
+                        sourceParameter,
+                        getOrAddMethodInfo,
+                        key,
+                        properties[key]));
+                }
+                else
+                {
+                    arguments.Add(BuildFieldArgumentExpression(
+                        dictionaryParameter,
+                        sourceParameter,
+                        getOrAddMethodInfo,
+                        key,
+                        fields[key]));
+                }
 
                 propertiesToSet.Remove(key);
             }
@@ -89,7 +100,7 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                 var memberBindings = propertiesToSet
                     .Select(p => Expression.Bind(
                         p.Value,
-                        BuildArgumentExpression(
+                        BuildPropertyArgumentExpression(
                             dictionaryParameter,
                             sourceParameter,
                             getOrAddMethodInfo,
@@ -108,7 +119,7 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
             return lambda.Compile();
         }
 
-        static UnaryExpression BuildArgumentExpression(
+        static UnaryExpression BuildPropertyArgumentExpression(
             ParameterExpression dictionaryParameter,
             ParameterExpression sourceParameter,
             MethodInfo getOrAddMethodInfo,
@@ -133,6 +144,28 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                                 propertyInfo)),
                         typeof(object))),
                 propertyType);
+        }
+
+        static UnaryExpression BuildFieldArgumentExpression(
+            ParameterExpression dictionaryParameter,
+            ParameterExpression sourceParameter,
+            MethodInfo getOrAddMethodInfo,
+            string key,
+            FieldInfo fieldInfo)
+        {
+            var fieldType = fieldInfo.FieldType;
+
+            return Expression.Convert(
+                Expression.Call(
+                    dictionaryParameter,
+                    getOrAddMethodInfo,
+                    Expression.Constant(key),
+                    Expression.TypeAs(
+                        Expression.Field(
+                            sourceParameter,
+                            fieldInfo),
+                        typeof(object))),
+                fieldType);
         }
     }
 }
