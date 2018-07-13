@@ -197,11 +197,15 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             }
             else
             {
-                value = typeof(TObject)
-                    .GetTypeInfo()
+                var typeInfo = typeof(TObject).GetTypeInfo();
+
+                value = typeInfo
                     .GetProperties()
-                    .Single(p => p.Name == name)
-                    .GetValue(obj);
+                    .SingleOrDefault(p => p.Name == name)?
+                    .GetValue(obj) ?? typeInfo
+                        .GetFields()
+                        .SingleOrDefault(p => p.Name == name)
+                        .GetValue(obj);
             }
 
             if (value == null)

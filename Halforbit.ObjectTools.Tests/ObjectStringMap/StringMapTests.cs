@@ -289,6 +289,16 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             Assert.Equal(123, y);
         }
 
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_ValueTuple_ThenSuccess()
+        {
+            var map = new StringMap<(double X, double Y)>("/contoso-app/add-numbers/{Item1}/{Item2}");
+
+            var s = map.Map((2, 3));
+
+            Assert.Equal("/contoso-app/add-numbers/2/3", s);
+        }
+
         [Fact, Trait("Type", "Speed")]
         public void MapObject_Guid_SpeedTest()
         {
