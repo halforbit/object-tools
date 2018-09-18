@@ -121,9 +121,27 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
         }
 
         public string Map(
-            TObject obj, 
+            TObject obj,
             bool allowPartialMap = false)
         {
+            return Map(
+                (name, format) => ResolveValue(obj, name, format),
+                allowPartialMap);
+        }
+
+        public string Map(
+            IReadOnlyDictionary<string, object> memberValues,
+            bool allowPartialMap = false)
+        {
+            return Map(
+                (name, format) => ResolveValue(memberValues, name, format),
+                allowPartialMap);
+        }
+
+        string Map(
+            Func<string, string, string> resolveValue,
+            bool allowPartialMap)
+        { 
             var output = new StringBuilder();
 
             var nodeMatches = NodePattern.Matches(Source).Cast<Match>();
@@ -146,9 +164,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                 var format = nodeMatch.Groups[FormatGroupKey].Value;
 
-                var value = obj != null ? 
-                    ResolveValue(obj, name, format) :
-                    null;
+                var value = resolveValue(name, format);
 
                 if (value == null)
                 {
@@ -185,13 +201,29 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
         public Regex Regex => _parseInfo.Value.Regex;
 
         static string ResolveValue(
-            TObject obj, 
+            IReadOnlyDictionary<string, object> objMembers,
+            string name,
+            string format)
+        {
+            var key = objMembers.Keys
+                .FirstOrDefault(k => string.Equals(k, name, StringComparison.InvariantCultureIgnoreCase));
+
+            if (key == null)
+            {
+                return null;
+            }
+
+            return FormatValue(name, format, objMembers[key]);
+        }
+
+        static string ResolveValue(
+            TObject obj,
             string name,
             string format)
         {
             var value = default(object);
 
-            if(name == ThisKeyword)
+            if (name == ThisKeyword)
             {
                 value = obj;
             }
@@ -208,6 +240,14 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                         .GetValue(obj);
             }
 
+            return FormatValue(name, format, value);
+        }
+
+        static string FormatValue(
+            string name, 
+            string format, 
+            object value)
+        { 
             if (value == null)
             {
                 return null;

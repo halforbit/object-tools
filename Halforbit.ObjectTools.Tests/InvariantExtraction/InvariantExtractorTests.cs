@@ -71,6 +71,99 @@ namespace Halforbit.ObjectTools.Tests.InvariantExtraction
             Assert.Null(invariant.CreateTime);
         }
 
+        [Fact, Trait("Type", "Unit")]
+        public void ExtractInvariants_WhenSimpleTypeValue_ThenSimpleTypeResult()
+        {
+            var expectedValue = new Guid("5891874f63684768b10d17499a21756c");
+
+            Expression<Func<Guid, bool>> redacted;
+
+            var invariant = new InvariantExtractor().ExtractInvariants(
+                c => c == expectedValue,
+                out redacted);
+
+            Assert.Equal(expectedValue, invariant);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void ExtractInvariantDictionary_WhenAllInvariants_ThenAllValues()
+        {
+            var accountId = 123;
+
+            var createTime = new DateTime(
+                2016, 7, 10,
+                1, 2, 3,
+                DateTimeKind.Utc);
+
+            Expression<Func<FileKey, bool>> redacted;
+
+            var invariant = new InvariantExtractor().ExtractInvariantDictionary(
+                c => c.AccountId == accountId && c.CreateTime == createTime,
+                out redacted);
+
+            Assert.Equal(2, invariant.Count);
+
+            Assert.Equal(accountId, invariant["AccountId"]);
+
+            Assert.Equal(createTime, invariant["CreateTime"]);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void ExtractInvariantDictionary_WhenSomeInvariant_ThenSomeInvariantValue()
+        {
+            var accountId = 123;
+
+            var createTime = new DateTime(
+                2016, 7, 10,
+                1, 2, 3,
+                DateTimeKind.Utc);
+
+            Expression<Func<FileKey, bool>> redacted;
+
+            var invariant = new InvariantExtractor().ExtractInvariantDictionary(
+                c => c.AccountId == accountId && c.CreateTime < createTime,
+                out redacted);
+
+            Assert.Equal(1, invariant.Count);
+
+            Assert.Equal(accountId, invariant["AccountId"]);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void ExtractInvariantDictionary_WhenNoInvariants_ThenNoValues()
+        {
+            var accountId = new Random().Next();
+
+            var createTime = new DateTime(
+                2016, 7, 10,
+                1, 2, 3,
+                DateTimeKind.Utc);
+
+            Expression<Func<FileKey, bool>> redacted;
+
+            var invariant = new InvariantExtractor().ExtractInvariantDictionary(
+                c => c.AccountId != accountId && c.CreateTime < createTime,
+                out redacted);
+
+            Assert.Equal(0, invariant.Count);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void ExtractInvariantDictionary_WhenSimpleTypeValue_ThenSimpleTypeResult()
+        {
+            var expectedValue = Guid.NewGuid();
+
+            Expression<Func<Guid, bool>> redacted;
+
+            var dictionary = new InvariantExtractor().ExtractInvariantDictionary(
+                c => c == expectedValue,
+                out redacted);
+
+            Assert.Equal(1, dictionary.Count);
+
+            Assert.Equal(expectedValue, dictionary["this"]);
+        }
+
         [Fact, Trait("Type", "Speed")]
         public void ExtractInvariants_SpeedTest()
         {

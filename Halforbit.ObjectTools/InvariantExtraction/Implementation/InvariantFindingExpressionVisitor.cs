@@ -23,6 +23,8 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
             get { return _propertyValues; }
         }
 
+        public object ThisValue { get; private set; }
+
         protected override Expression VisitParameter(ParameterExpression node)
         {
             return base.VisitParameter(node);
@@ -93,6 +95,23 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
                             }
                         }
                     }
+                }
+                else if (node.Left.NodeType == ExpressionType.Parameter)
+                {
+                    // Else if the left side is a lambda parameter...
+
+                    var value = EvaluateExpressionValue(node.Right);
+
+                    // Set the this value to the evaluated value.
+
+                    ThisValue = value;
+
+                    // Return a binary equals with a guaranteed constant value on the right.
+
+                    return Expression.MakeBinary(
+                        ExpressionType.Equal,
+                        node.Left,
+                        Expression.Constant(value, node.Right.Type));
                 }
             }
 

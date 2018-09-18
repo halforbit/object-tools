@@ -1,7 +1,9 @@
 ﻿using Halforbit.ObjectTools.ObjectStringMap.Implementation;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace Halforbit.ObjectTools.Tests.ObjectStringMap
 {
@@ -16,11 +18,29 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             0, 0, 0, 
             DateTimeKind.Utc);
 
+        readonly ITestOutputHelper _testOutputHelper;
+
+        public StringMapTests(ITestOutputHelper testOutputHelper)
+        {
+            _testOutputHelper = testOutputHelper;
+        }
+
         [Fact, Trait("Type", "Unit")]
         public void MapObject_WhenString_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
                 TestString,
+                TestString);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenString_ThenSuccess()
+        {
+            MapDictionary_WhenSimpleType_ThenSuccess<string>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = TestString
+                },
                 TestString);
         }
 
@@ -33,19 +53,24 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_WhenString_WildcardTail_ThenSuccess()
+        public void MapDictionary_WhenString_WildcardTail_ThenSuccess()
         {
+            var key = "charlie/delta/bravo.jpg";
+
             var map = new StringMap<string>("alfa/{*this}");
 
-            var str = map.Map("alfa/charlie/delta/bravo.jpg");
+            var str = map.Map(new Dictionary<string, object>
+            {
+                ["this"] = key
+            });
 
             Assert.Equal(
-                "charlie/delta/bravo.jpg",
+                $"alfa/{key}",
                 str);
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapString_WildcardTail_ThenSuccess()
+        public void MapObject_WildcardTail_ThenSuccess()
         {
             var key = "charlie/delta/bravo.jpg";
 
@@ -59,11 +84,35 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenString_WildcardTail_ThenSuccess()
+        {
+            var map = new StringMap<string>("alfa/{*this}");
+
+            var str = map.Map("alfa/charlie/delta/bravo.jpg");
+
+            Assert.Equal(
+                "charlie/delta/bravo.jpg",
+                str);
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapObject_WhenDateTime_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
                 TestDate, 
                 TestDate.ToString(DateFormat), 
+                DateFormat);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenDateTime_ThenSuccess()
+        {
+            MapDictionary_WhenSimpleType_ThenSuccess<DateTime>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = TestDate
+                },
+                TestDate.ToString(DateFormat),
                 DateFormat);
         }
 
@@ -85,6 +134,17 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenInt_ThenSuccess()
+        {
+            MapDictionary_WhenSimpleType_ThenSuccess<int>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = int.MaxValue
+                },
+                int.MaxValue.ToString());
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapString_WhenInt_ThenSuccess()
         {
             MapString_WhenSimpleType_ThenSuccess(
@@ -97,6 +157,17 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         {
             MapObject_WhenSimpleType_ThenSuccess(
                 (int?)int.MaxValue,
+                int.MaxValue.ToString());
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenNullableInt_ThenSuccess()
+        {
+            MapDictionary_WhenSimpleType_ThenSuccess<int?>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = (int?)int.MaxValue
+                },
                 int.MaxValue.ToString());
         }
 
@@ -117,6 +188,17 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenLong_ThenSuccess()
+        {
+            MapDictionary_WhenSimpleType_ThenSuccess<long>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = long.MaxValue
+                },                
+                long.MaxValue.ToString());
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapString_WhenLong_ThenSuccess()
         {
             MapString_WhenSimpleType_ThenSuccess(
@@ -130,6 +212,19 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             var guid = Guid.NewGuid();
 
             MapObject_WhenSimpleType_ThenSuccess(guid, guid.ToString("N"));
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenGuid_ThenSuccess()
+        {
+            var guid = Guid.NewGuid();
+
+            MapDictionary_WhenSimpleType_ThenSuccess<Guid>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = guid
+                },
+                guid.ToString("N"));
         }
 
         [Fact, Trait("Type", "Unit")]
@@ -149,6 +244,19 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenDashedGuid_ThenSuccess()
+        {
+            var guid = Guid.NewGuid();
+
+            MapDictionary_WhenSimpleType_ThenSuccess<Guid>(
+                new Dictionary<string, object>
+                {
+                    ["this"] = guid
+                },
+                guid.ToString("D"), "D");
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapString_WhenDashedGuid_ThenSuccess()
         {
             var guid = Guid.NewGuid();
@@ -162,6 +270,19 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             var guid = Guid.NewGuid();
 
             MapObject_WhenWrappedType_ThenSuccess(guid, guid.ToString("N"));
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenWrappedGuid_ThenSuccess()
+        {
+            var guid = Guid.NewGuid();
+
+            MapDictionary_WhenWrappedType_ThenSuccess<Guid>(
+                new Dictionary<string, object>
+                {
+                    ["Property"] = guid
+                }, 
+                guid.ToString("N"));
         }
 
         [Fact, Trait("Type", "Unit")]
@@ -181,6 +302,19 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenWrappedDashedGuid_ThenSuccess()
+        {
+            var guid = Guid.NewGuid();
+
+            MapDictionary_WhenWrappedType_ThenSuccess<Guid>(
+                new Dictionary<string, object>
+                {
+                    ["Property"] = guid
+                }, 
+                guid.ToString("D"), "D");
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapString_WhenWrappedDashedGuid_ThenSuccess()
         {
             var guid = Guid.NewGuid();
@@ -197,6 +331,19 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_WhenImmutableGuid_ThenSuccess()
+        {
+            var guid = Guid.NewGuid();
+
+            MapDictionary_WhenImmutableType_ThenSuccess<Guid>(
+                new Dictionary<string, object>
+                {
+                    ["Property"] = guid
+                }, 
+                guid.ToString("N"));
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapString_WhenImmutableGuid_ThenSuccess()
         {
             var guid = Guid.NewGuid();
@@ -205,7 +352,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_WhenInvalidValue_ThenDefault()
+        public void MapString_WhenInvalidValue_ThenDefault()
         {
             var map = new StringMap<Wrapper<Guid>>("alfa/{Property}/bravo");
 
@@ -217,7 +364,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_WhenPatternNotMatched_ThenDefault()
+        public void MapString_WhenPatternNotMatched_ThenDefault()
         {
             var map = new StringMap<Wrapper<Guid>>("alfa/{Property}/bravo");
 
@@ -229,7 +376,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_WhenSlashInPattern_ThenProperMatch()
+        public void MapString_WhenSlashInPattern_ThenProperMatch()
         {
             var map = new StringMap<ExchangeCurrencyPairTimeKey>(
                 "order-books/{Exchange}/{CurrencyPair}/{Time:yyyy-MM-dd/HH-mm-ss}");
@@ -268,7 +415,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_NonFullMatch_ThenNull()
+        public void MapString_NonFullMatch_ThenNull()
         {
             var map = new StringMap<ExchangeCurrencyPairTimeKey>("apples/{Exchange}/oranges");
 
@@ -278,7 +425,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapObject_ValueTuple_ThenSuccess()
+        public void MapString_ValueTuple_ThenSuccess()
         {
             var map = new StringMap<(double X, double Y)>("apples/{Item1}/{Item2}/oranges");
 
@@ -290,11 +437,26 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
-        public void MapString_ValueTuple_ThenSuccess()
+        public void MapObject_ValueTuple_ThenSuccess()
         {
             var map = new StringMap<(double X, double Y)>("/contoso-app/add-numbers/{Item1}/{Item2}");
 
             var s = map.Map((2, 3));
+
+            Assert.Equal("/contoso-app/add-numbers/2/3", s);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapDictionary_ValueTuple_ThenSuccess()
+        {
+            var map = new StringMap<(double X, double Y)>("/contoso-app/add-numbers/{Item1}/{Item2}");
+
+            var s = map.Map(new Dictionary<string, object>
+            {
+                ["Item1"] = 2,
+
+                ["Item2"] = 3
+            });
 
             Assert.Equal("/contoso-app/add-numbers/2/3", s);
         }
@@ -317,9 +479,37 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 count++;
             }
 
-            Console.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
 
-            Console.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+        }
+
+        [Fact, Trait("Type", "Speed")]
+        public void MapDictionary_Guid_SpeedTest()
+        {
+            var value = Guid.NewGuid();
+
+            var map = new StringMap<Guid>("alfa/{this}/bravo");
+
+            var time = Stopwatch.StartNew();
+
+            var count = 0;
+
+            var memberValues = new Dictionary<string, object>
+            {
+                ["this"] = value
+            };
+
+            while (time.Elapsed.TotalSeconds < 5)
+            {
+                var str = map.Map(memberValues);
+                
+                count++;
+            }
+
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
         }
 
         [Fact, Trait("Type", "Speed")]
@@ -342,9 +532,9 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 count++;
             }
 
-            Console.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
 
-            Console.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
         }
 
         [Fact, Trait("Type", "Speed")]
@@ -368,9 +558,40 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 count++;
             }
 
-            Console.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
 
-            Console.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+        }
+
+        [Fact, Trait("Type", "Speed")]
+        public void MapDictionary_DateTime_SpeedTest()
+        {
+            var value = new DateTime(
+                2016, 7, 11,
+                2, 3, 4,
+                DateTimeKind.Utc);
+
+            var map = new StringMap<DateTime>("alfa/{this:yyyy/MM/dd/hh/mm/ss}/bravo");
+
+            var time = Stopwatch.StartNew();
+
+            var count = 0;
+
+            var memberValues = new Dictionary<string, object>
+            {
+                ["this"] = value
+            };
+
+            while (time.Elapsed.TotalSeconds < 5)
+            {
+                var str = map.Map(memberValues);
+
+                count++;
+            }
+
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
         }
 
         [Fact, Trait("Type", "Speed")]
@@ -396,9 +617,9 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 count++;
             }
 
-            Console.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
 
-            Console.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
         }
 
         [Fact, Trait("Type", "Speed")]
@@ -422,9 +643,38 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 count++;
             }
 
-            Console.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
 
-            Console.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+        }
+
+        [Fact, Trait("Type", "Speed")]
+        public void MapDictionary_ImmutableDateTime_SpeedTest()
+        {
+            var map = new StringMap<Immutable<DateTime>>("alfa/{Property:yyyy/MM/dd/hh/mm/ss}/bravo");
+
+            var memberValues = new Dictionary<string, object>
+            {
+                ["Property"] = new DateTime(
+                    2016, 7, 11,
+                    2, 3, 4,
+                    DateTimeKind.Utc)
+            };
+            
+            var count = 0;
+
+            var time = Stopwatch.StartNew();
+                        
+            while (time.Elapsed.TotalSeconds < 5)
+            {
+                var str = map.Map(memberValues);
+
+                count++;
+            }
+
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
         }
 
         [Fact, Trait("Type", "Speed")]
@@ -450,12 +700,12 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                count++;
             }
 
-            Console.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
+            _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
 
-            Console.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
+            _testOutputHelper.WriteLine($"Avg: {time.Elapsed.TotalMilliseconds / count} ms");
         }
 
-        static void MapObject_WhenSimpleType_ThenSuccess<TSimpleType>(
+        void MapObject_WhenSimpleType_ThenSuccess<TSimpleType>(
             TSimpleType value,
             string stringValue,
             string format = null)
@@ -470,12 +720,32 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 $"alfa/{stringValue}/bravo",
                 str);
 
-            Console.WriteLine($"map: {map}");
+            _testOutputHelper.WriteLine($"map: {map}");
 
-            Console.WriteLine($"str: {str}");
+            _testOutputHelper.WriteLine($"str: {str}");
         }
 
-        static void MapString_WhenSimpleType_ThenSuccess<TSimpleType>(
+        void MapDictionary_WhenSimpleType_ThenSuccess<TSimpleType>(
+            IReadOnlyDictionary<string, object> dictionary,
+            string stringValue,
+            string format = null)
+        {
+            var map = new StringMap<TSimpleType>(string.IsNullOrWhiteSpace(format) ?
+                "alfa/{this}/bravo" :
+                $"alfa/{{this:{format}}}/bravo");
+
+            var str = map.Map(dictionary);
+
+            Assert.Equal(
+                $"alfa/{stringValue}/bravo",
+                str);
+
+            _testOutputHelper.WriteLine($"map: {map}");
+
+            _testOutputHelper.WriteLine($"str: {str}");
+        }
+
+        void MapString_WhenSimpleType_ThenSuccess<TSimpleType>(
             string stringValue,
             TSimpleType value,
             string format = null)
@@ -492,12 +762,12 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 value,
                 obj);
 
-            Console.WriteLine($"map: {map}");
+            _testOutputHelper.WriteLine($"map: {map}");
 
-            Console.WriteLine($"str: {str}");
+            _testOutputHelper.WriteLine($"str: {str}");
         }
 
-        static void MapObject_WhenWrappedType_ThenSuccess<TType>(
+        void MapObject_WhenWrappedType_ThenSuccess<TType>(
             TType value,
             string stringValue,
             string format = null)
@@ -513,18 +783,40 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
 
             var str = map.Map(obj);
 
-            Console.WriteLine($"str is {str}");
+            _testOutputHelper.WriteLine($"str is {str}");
 
             Assert.Equal(
                 $"alfa/{stringValue}/bravo",
                 str);
 
-            Console.WriteLine($"map: {map}");
+            _testOutputHelper.WriteLine($"map: {map}");
 
-            Console.WriteLine($"str: {str}");
+            _testOutputHelper.WriteLine($"str: {str}");
         }
 
-        static void MapString_WhenWrappedType_ThenSuccess<TType>(
+        void MapDictionary_WhenWrappedType_ThenSuccess<TType>(
+            IReadOnlyDictionary<string, object> memberValues,
+            string stringValue,
+            string format = null)
+        {
+            var map = new StringMap<Wrapper<TType>>(string.IsNullOrWhiteSpace(format) ?
+                "alfa/{Property}/bravo" :
+                $"alfa/{{Property:{format}}}/bravo");
+
+            var str = map.Map(memberValues);
+
+            _testOutputHelper.WriteLine($"str is {str}");
+
+            Assert.Equal(
+                $"alfa/{stringValue}/bravo",
+                str);
+
+            _testOutputHelper.WriteLine($"map: {map}");
+
+            _testOutputHelper.WriteLine($"str: {str}");
+        }
+
+        void MapString_WhenWrappedType_ThenSuccess<TType>(
             string stringValue,
             TType value,
             string format = null)
@@ -541,12 +833,12 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 value,
                 obj.Property);
 
-            Console.WriteLine($"map: {map}");
+            _testOutputHelper.WriteLine($"map: {map}");
 
-            Console.WriteLine($"str: {str}");
+            _testOutputHelper.WriteLine($"str: {str}");
         }
 
-        static void MapObject_WhenImmutableType_ThenSuccess<TType>(
+        void MapObject_WhenImmutableType_ThenSuccess<TType>(
             TType value,
             string stringValue,
             string format = null)
@@ -559,18 +851,40 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
 
             var str = map.Map(obj);
 
-            Console.WriteLine($"str is {str}");
+            _testOutputHelper.WriteLine($"str is {str}");
 
             Assert.Equal(
                 $"alfa/{stringValue}/bravo",
                 str);
 
-            Console.WriteLine($"map: {map}");
+            _testOutputHelper.WriteLine($"map: {map}");
 
-            Console.WriteLine($"str: {str}");
+            _testOutputHelper.WriteLine($"str: {str}");
         }
 
-        static void MapString_WhenImmutableType_ThenSuccess<TType>(
+        void MapDictionary_WhenImmutableType_ThenSuccess<TType>(
+            IReadOnlyDictionary<string, object> memberValues,
+            string stringValue,
+            string format = null)
+        {
+            var map = new StringMap<Immutable<TType>>(string.IsNullOrWhiteSpace(format) ?
+                "alfa/{Property}/bravo" :
+                $"alfa/{{Property:{format}}}/bravo");
+
+            var str = map.Map(memberValues);
+
+            _testOutputHelper.WriteLine($"str is {str}");
+
+            Assert.Equal(
+                $"alfa/{stringValue}/bravo",
+                str);
+
+            _testOutputHelper.WriteLine($"map: {map}");
+
+            _testOutputHelper.WriteLine($"str: {str}");
+        }
+
+        void MapString_WhenImmutableType_ThenSuccess<TType>(
             string stringValue,
             TType value,
             string format = null)
@@ -587,9 +901,9 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 value,
                 obj.Property);
 
-            Console.WriteLine($"map: {map}");
+            _testOutputHelper.WriteLine($"map: {map}");
 
-            Console.WriteLine($"str: {str}");
+            _testOutputHelper.WriteLine($"str: {str}");
         }
 
         class Wrapper<TType> 
