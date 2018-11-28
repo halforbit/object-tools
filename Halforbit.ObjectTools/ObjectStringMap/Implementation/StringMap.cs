@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 {
-    public class StringMap<TObject> : 
+    public class StringMap<TObject> :
         IStringMap<TObject>
     {
         const string NameGroupKey = "Name";
@@ -74,7 +74,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                     thisGroup.Value,
                     format);
 
-                if(typedValue == null)
+                if (typedValue == null)
                 {
                     return default(TObject);
                 }
@@ -87,7 +87,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                 var typeInfo = typeof(TObject).GetTypeInfo();
 
-                foreach(var name in parseInfo.Regex.GetGroupNames())
+                foreach (var name in parseInfo.Regex.GetGroupNames())
                 {
                     if (int.TryParse(name, out var i)) continue;
 
@@ -110,7 +110,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                     }
 
                     builder.Set(
-                        property?.Name ?? field?.Name, 
+                        property?.Name ?? field?.Name,
                         typedValue);
                 }
 
@@ -141,7 +141,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
         string Map(
             Func<string, string, string> resolveValue,
             bool allowPartialMap)
-        { 
+        {
             var output = new StringBuilder();
 
             var nodeMatches = NodePattern.Matches(Source).Cast<Match>();
@@ -157,7 +157,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                 var name = nodeMatch.Groups[NameGroupKey].Value;
 
-                if(name.StartsWith("*"))
+                if (name.StartsWith("*"))
                 {
                     name = name.Substring(1);
                 }
@@ -175,7 +175,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                     else
                     {
                         throw new ArgumentNullException(
-                            name, 
+                            name,
                             $"A required value was null while mapping {typeof(TObject).Name} to a string.");
                     }
                 }
@@ -244,10 +244,10 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
         }
 
         static string FormatValue(
-            string name, 
-            string format, 
+            string name,
+            string format,
             object value)
-        { 
+        {
             if (value == null)
             {
                 return null;
@@ -265,7 +265,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                 return formattable.ToString(format, null);
             }
 
-            if(value is Guid)
+            if (value is Guid)
             {
                 return ((Guid)value).ToString("N");
             }
@@ -275,12 +275,12 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
         static string ResolvePattern(string name, int slashCount)
         {
-            if(name.StartsWith("*"))
+            if (name.StartsWith("*"))
             {
                 return $"(?<{name.Substring(1)}>.*)";
             }
 
-            if(slashCount == 0)
+            if (slashCount == 0)
             {
                 return $"(?<{name}>[^/]*)";
             }
@@ -295,7 +295,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
         }
 
         static object ConvertStringToType(
-            Type type, 
+            Type type,
             string stringValue,
             string format)
         {

@@ -11,14 +11,14 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
     public class InvariantExtractor : IInvariantExtractor
     {
         public TObject ExtractInvariants<TObject>(
-            Expression<Func<TObject, bool>> inputExpression, 
+            Expression<Func<TObject, bool>> inputExpression,
             out Expression<Func<TObject, bool>> invariantExpression,
             TObject cloneSource = default(TObject))
         {
             var visitor = new InvariantFindingExpressionVisitor<TObject>(cloneSource);
 
             invariantExpression = visitor
-                .Visit(inputExpression) 
+                .Visit(inputExpression)
                 as Expression<Func<TObject, bool>>;
 
             if (visitor.MemberValues.Count > 0 || typeof(TObject).IsClass)
@@ -38,7 +38,7 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
 
                 return invariantObjectBuilder.Build();
             }
-            else if(visitor.ThisValue != null)
+            else if (visitor.ThisValue != null)
             {
                 return (TObject)visitor.ThisValue;
             }
@@ -58,11 +58,9 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
 
             var memberValueCount = visitor.MemberValues.Count;
 
-            Dictionary<string, object> invariants = default;
-
             if (memberValueCount > 0 || typeof(TObject).IsClass)
             {
-                invariants = new Dictionary<string, object>(memberValueCount);
+                var invariants = new Dictionary<string, object>(memberValueCount);
 
                 foreach (var memberValue in visitor.MemberValues)
                 {
@@ -75,7 +73,7 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
 
                 return invariants;
             }
-            else if(visitor.ThisValue != null)
+            else if (visitor.ThisValue != null)
             {
                 return new Dictionary<string, object>
                 {

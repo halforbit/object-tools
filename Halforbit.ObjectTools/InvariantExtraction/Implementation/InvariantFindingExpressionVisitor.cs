@@ -7,7 +7,7 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
 {
     class InvariantFindingExpressionVisitor<TObject> : ExpressionVisitor
     {
-        List<Tuple<PropertyInfo, object>> _propertyValues = 
+        List<Tuple<PropertyInfo, object>> _propertyValues =
             new List<Tuple<PropertyInfo, object>>();
 
         readonly TObject _cloneSource;
@@ -32,7 +32,7 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
 
         protected override Expression VisitBinary(BinaryExpression node)
         {
-            if(node.NodeType == ExpressionType.Equal)
+            if (node.NodeType == ExpressionType.Equal)
             {
                 // If this binary operator is an equals...
 
@@ -44,7 +44,7 @@ namespace Halforbit.ObjectTools.InvariantExtraction.Implementation
 
                     var propertyInfo = memberExpression.Member as PropertyInfo;
 
-                    if(propertyInfo != null)
+                    if (propertyInfo != null)
                     {
                         // If the member accessed is a property...
 
