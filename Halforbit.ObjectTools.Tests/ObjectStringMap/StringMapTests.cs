@@ -461,6 +461,20 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             Assert.Equal("/contoso-app/add-numbers/2/3", s);
         }
 
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenNullableProperty_ThenSuccess()
+        {
+            var k = new ExchangeProductDateTimeKey(
+                "coinbase-pro",
+                "btc-usd",
+                new DateTime(2019, 9, 30, 0, 0, 0, DateTimeKind.Utc),
+                null);
+
+            var actual = new StringMap<ExchangeProductDateTimeKey>("order-book-snapshots/{ExchangeId}/{ProductId}/{Date:yyyy-MM-dd}/{Time:HH-mm-ss}").Map(k, true);
+
+            Assert.Equal("order-book-snapshots/coinbase-pro/btc-usd/2019-09-30/", actual);
+        }
+
         [Fact, Trait("Type", "Speed")]
         public void MapObject_Guid_SpeedTest()
         {
@@ -938,6 +952,32 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             public string Exchange { get; }
 
             public string CurrencyPair { get; }
+
+            public DateTime? Time { get; }
+        }
+
+        public class ExchangeProductDateTimeKey
+        {
+            public ExchangeProductDateTimeKey(
+                string exchangeId,
+                string productId,
+                DateTime date,
+                DateTime? time)
+            {
+                ExchangeId = exchangeId;
+
+                ProductId = productId;
+
+                Date = date;
+
+                Time = time;
+            }
+
+            public string ExchangeId { get; }
+
+            public string ProductId { get; }
+
+            public DateTime Date { get; }
 
             public DateTime? Time { get; }
         }

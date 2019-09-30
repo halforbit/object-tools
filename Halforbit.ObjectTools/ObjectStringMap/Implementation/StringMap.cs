@@ -231,13 +231,27 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             {
                 var typeInfo = typeof(TObject).GetTypeInfo();
 
-                value = typeInfo
+                var property = typeInfo
                     .GetProperties()
-                    .SingleOrDefault(p => p.Name == name)?
-                    .GetValue(obj) ?? typeInfo
-                        .GetFields()
-                        .SingleOrDefault(p => p.Name == name)
-                        .GetValue(obj);
+                    .SingleOrDefault(p => p.Name == name);
+
+                if(property != null)
+                {
+                    value = property.GetValue(obj);
+                }
+                else
+                {
+                    var field = typeInfo.GetFields().SingleOrDefault(p => p.Name == name);
+
+                    if (field != null)
+                    {
+                        value = field.GetValue(obj);
+                    }
+                    else
+                    {
+                        throw new Exception($"Could not resolve string map property or field '{name}'");
+                    }
+                }
             }
 
             return FormatValue(name, format, value);
