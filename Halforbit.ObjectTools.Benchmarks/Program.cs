@@ -20,9 +20,10 @@ namespace Halforbit.ObjectTools.Benchmarks
                 .With(DefaultColumnProviders.Params)
                 .With(DefaultColumnProviders.Metrics)
                 .With(DefaultColumnProviders.Statistics)
-                .With(Job.ShortRun.With(ClrRuntime.CreateForLocalFullNetFrameworkBuild("net462")))
-                .With(Job.ShortRun.With(CoreRuntime.Core22))
-                .With(Job.ShortRun.With(CoreRuntime.Core30)));
+                .With(Job.LongRun.With(CoreRuntime.Core22)));
+                //.With(Job.ShortRun.With(ClrRuntime.CreateForLocalFullNetFrameworkBuild("net462")))
+                //.With(Job.ShortRun.With(CoreRuntime.Core22))
+                //.With(Job.ShortRun.With(CoreRuntime.Core30)));
         }
     }
 }
