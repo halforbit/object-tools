@@ -12,41 +12,26 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
     public class StringMap<TObject> :
         IStringMap<TObject>
     {
-        const string NameGroupKey = "Name";
-
-        const string FormatGroupKey = "Format";
-
-        const string ThisKeyword = "this";
-
-        static readonly Regex NodePattern = new Regex(
-            @"\{(?<Name>[^}]+?)(:(?<Format>[^}]+)){0,1}}",
-            RegexOptions.None);// RegexOptions.Compiled);
-
         readonly Lazy<ParseInfo> _parseInfo;
 
         public StringMap(string source)
         {
             Source = source;
 
-            _parseInfo = new Lazy<ParseInfo>(() => ResolveParseInfo(source));
-        }
-
-        public static implicit operator StringMap<TObject>(string source)
-        {
-            return new StringMap<TObject>(source);
-        }
-
-        public static implicit operator string(StringMap<TObject> stringMap)
-        {
-            return stringMap?.Source;
+            _parseInfo = new Lazy<ParseInfo>(() => ParseInfo.ResolveParseInfo(source));
         }
 
         public string Source { get; }
 
-        public override string ToString()
-        {
-            return Source;
-        }
+        public Regex Regex => _parseInfo.Value.Regex;
+
+        public static implicit operator StringMap<TObject>(string source) => new StringMap<TObject>(source);
+
+        public static implicit operator string(StringMap<TObject> stringMap) => stringMap?.Source;
+
+        public override string ToString() => Source;
+
+        public bool IsMatch(string str) => _parseInfo.Value.Regex.IsMatch(str);
 
         public TObject Map(string str)
         {
@@ -54,29 +39,26 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
             var match = parseInfo.Regex.Match(str);
 
-            if (!match.Success)
-            {
-                return default(TObject);
-            }
+            if (!match.Success) return default;
 
-            var thisGroup = match.Groups[ThisKeyword];
+            var thisGroup = match.Groups[ObjectToStringConverter.ThisKeyword];
 
-            var format = default(string);
+            string format;
 
-            var obj = default(TObject);
+            TObject obj;
 
             if (thisGroup.Success)
             {
-                parseInfo.Formats.TryGetValue(ThisKeyword, out format);
+                parseInfo.Formats.TryGetValue(ObjectToStringConverter.ThisKeyword, out format);
 
-                var typedValue = ConvertStringToType(
+                var typedValue = StringToObjectConverter.ConvertToObject(
                     typeof(TObject),
                     thisGroup.Value,
                     format);
 
                 if (typedValue == null)
                 {
-                    return default(TObject);
+                    return default;
                 }
 
                 obj = (TObject)typedValue;
@@ -99,14 +81,14 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                     format = parseInfo.Formats.TryGetValue(name, out format) ? format : null;
 
-                    var typedValue = ConvertStringToType(
+                    var typedValue = StringToObjectConverter.ConvertToObject(
                         property?.PropertyType ?? field?.FieldType,
                         value,
                         format);
 
                     if (typedValue == null)
                     {
-                        return default(TObject);
+                        return default;
                     }
 
                     builder.Set(
@@ -125,7 +107,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             bool allowPartialMap = false)
         {
             return Map(
-                (name, format) => ResolveValue(obj, name, format),
+                (name, format) => ObjectToStringConverter.ResolveStringFromProperty(obj, name, format),
                 allowPartialMap);
         }
 
@@ -134,17 +116,17 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             bool allowPartialMap = false)
         {
             return Map(
-                (name, format) => ResolveValue(memberValues, name, format),
+                (name, format) => ObjectToStringConverter.ResolveStringFromKeyValue(memberValues, name, format),
                 allowPartialMap);
         }
 
         string Map(
-            Func<string, string, string> resolveValue,
+            Func<string, string, string> resolveMemberString,
             bool allowPartialMap)
         {
             var output = new StringBuilder();
 
-            var nodeMatches = NodePattern.Matches(Source).Cast<Match>();
+            var nodeMatches = ParseInfo.NodePattern.Matches(Source).Cast<Match>();
 
             var index = 0;
 
@@ -155,16 +137,16 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                     output.Append(Source.Substring(index, nodeMatch.Index - index));
                 }
 
-                var name = nodeMatch.Groups[NameGroupKey].Value;
+                var name = nodeMatch.Groups[ParseInfo.NameGroupKey].Value;
 
                 if (name.StartsWith("*"))
                 {
                     name = name.Substring(1);
                 }
 
-                var format = nodeMatch.Groups[FormatGroupKey].Value;
+                var format = nodeMatch.Groups[ParseInfo.FormatGroupKey].Value;
 
-                var value = resolveValue(name, format);
+                var value = resolveMemberString(name, format);
 
                 if (value == null)
                 {
@@ -191,221 +173,6 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             }
 
             return output.ToString();
-        }
-
-        public bool IsMatch(string str)
-        {
-            return _parseInfo.Value.Regex.IsMatch(str);
-        }
-
-        public Regex Regex => _parseInfo.Value.Regex;
-
-        static string ResolveValue(
-            IReadOnlyDictionary<string, object> objMembers,
-            string name,
-            string format)
-        {
-            var key = objMembers.Keys
-                .FirstOrDefault(k => string.Equals(k, name, StringComparison.InvariantCultureIgnoreCase));
-
-            if (key == null)
-            {
-                return null;
-            }
-
-            return FormatValue(name, format, objMembers[key]);
-        }
-
-        static string ResolveValue(
-            TObject obj,
-            string name,
-            string format)
-        {
-            var value = default(object);
-
-            if (name == ThisKeyword)
-            {
-                value = obj;
-            }
-            else
-            {
-                var typeInfo = typeof(TObject).GetTypeInfo();
-
-                var property = typeInfo
-                    .GetProperties()
-                    .SingleOrDefault(p => p.Name == name);
-
-                if(property != null)
-                {
-                    value = property.GetValue(obj);
-                }
-                else
-                {
-                    var field = typeInfo.GetFields().SingleOrDefault(p => p.Name == name);
-
-                    if (field != null)
-                    {
-                        value = field.GetValue(obj);
-                    }
-                    else
-                    {
-                        throw new Exception($"Could not resolve string map property or field '{name}'");
-                    }
-                }
-            }
-
-            return FormatValue(name, format, value);
-        }
-
-        static string FormatValue(
-            string name,
-            string format,
-            object value)
-        {
-            if (value == null)
-            {
-                return null;
-            }
-
-            if (!string.IsNullOrWhiteSpace(format))
-            {
-                var formattable = value as IFormattable;
-
-                if (formattable == null)
-                {
-                    throw new ArgumentException($"{name} has a format but is not IFormattable.");
-                }
-
-                return formattable.ToString(format, null);
-            }
-
-            if (value is Guid)
-            {
-                return ((Guid)value).ToString("N");
-            }
-
-            return value.ToString();
-        }
-
-        static string ResolvePattern(string name, int slashCount)
-        {
-            if (name.StartsWith("*"))
-            {
-                return $"(?<{name.Substring(1)}>.*)";
-            }
-
-            if (slashCount == 0)
-            {
-                return $"(?<{name}>[^/]*)";
-            }
-
-            var segments = string.Join(
-                "/",
-                Enumerable
-                    .Range(0, slashCount + 1)
-                    .Select(i => "[^/]*"));
-
-            return $"(?<{name}>{segments})";
-        }
-
-        static object ConvertStringToType(
-            Type type,
-            string stringValue,
-            string format)
-        {
-            var typeInfo = type.GetTypeInfo();
-
-            try
-            {
-                if (type.Equals(typeof(Guid)) || type.Equals(typeof(Guid?)))
-                {
-                    return Guid.Parse(stringValue);
-                }
-                else if ((type.Equals(typeof(DateTime)) || type.Equals(typeof(DateTime?))) &&
-                    !string.IsNullOrWhiteSpace(format))
-                {
-                    return DateTime.ParseExact(stringValue, format, null);
-                }
-                else
-                {
-                    if (typeInfo.IsGenericType &&
-                        type.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
-                    {
-                        type = typeInfo.GenericTypeArguments.Single();
-                    }
-
-                    return Convert.ChangeType(stringValue, type);
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        static ParseInfo ResolveParseInfo(string source)
-        {
-            var pattern = new StringBuilder();
-
-            var nodeMatches = NodePattern.Matches(source).Cast<Match>();
-
-            var index = 0;
-
-            var formats = new Dictionary<string, string>();
-
-            foreach (var nodeMatch in nodeMatches)
-            {
-                if (nodeMatch.Index > index)
-                {
-                    pattern.Append(Regex.Escape(source.Substring(index, nodeMatch.Index - index)));
-                }
-
-                var nodeName = nodeMatch.Groups[NameGroupKey].Value;
-
-                var nodeFormat = nodeMatch.Groups[FormatGroupKey].Value;
-
-                if (!string.IsNullOrWhiteSpace(nodeFormat))
-                {
-                    formats.Add(nodeName, nodeFormat);
-                }
-
-                var slashCount = string.IsNullOrWhiteSpace(nodeFormat) ?
-                    0 :
-                    nodeFormat.Count(ch => ch == '/');
-
-                var nodePattern = ResolvePattern(nodeName, slashCount);
-
-                pattern.Append(nodePattern);
-
-                index = nodeMatch.Index + nodeMatch.Length;
-            }
-
-            if (index < source.Length)
-            {
-                pattern.Append(Regex.Escape(source.Substring(index)));
-            }
-
-            var regex = new Regex(
-                $"^{pattern}$",
-                RegexOptions.None);// RegexOptions.Compiled);
-
-            return new ParseInfo(formats, regex);
-        }
-
-        class ParseInfo
-        {
-            public ParseInfo(
-                Dictionary<string, string> formats,
-                Regex regex)
-            {
-                Formats = formats;
-
-                Regex = regex;
-            }
-
-            public Dictionary<string, string> Formats { get; }
-
-            public Regex Regex { get; }
         }
     }
 }
