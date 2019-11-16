@@ -13,15 +13,14 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             string name,
             string format)
         {
-            var key = objMembers.Keys
-                .FirstOrDefault(k => string.Equals(k, name, StringComparison.InvariantCultureIgnoreCase));
-
-            if (key == null)
+            if (objMembers.TryGetValue(name, out var value))
+            {
+                return FormatValue(value, format);
+            }
+            else
             {
                 return null;
             }
-
-            return FormatValue(objMembers[key], format);
         }
 
         public static string ResolveStringFromProperty(
