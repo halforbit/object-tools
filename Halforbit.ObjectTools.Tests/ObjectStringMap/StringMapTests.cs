@@ -1,4 +1,5 @@
 ﻿using Halforbit.ObjectTools.ObjectStringMap.Implementation;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,8 +15,8 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         const string DateFormat = "yyyy/MM/dd";
 
         readonly DateTime TestDate = new DateTime(
-            2016, 7, 9, 
-            0, 0, 0, 
+            2016, 7, 9,
+            0, 0, 0,
             DateTimeKind.Utc);
 
         readonly ITestOutputHelper _testOutputHelper;
@@ -31,6 +32,76 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             MapObject_WhenSimpleType_ThenSuccess(
                 TestString,
                 TestString);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "charlie-delta");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "charlie-delta",
+                TestEnumEcho.CharlieDelta);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_PascalCase_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "CharlieDelta",
+                "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_PascalCase_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "CharlieDelta",
+                TestEnumEcho.CharlieDelta,
+                "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_CamelCase_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "charlieDelta",
+                "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_CamelCase_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "charlieDelta",
+                TestEnumEcho.CharlieDelta,
+                "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_Integer_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "2",
+                "i");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_Integer_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "2",
+                TestEnumEcho.CharlieDelta,
+                "i");
         }
 
         [Fact, Trait("Type", "Unit")]
@@ -99,8 +170,8 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         public void MapObject_WhenDateTime_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
-                TestDate, 
-                TestDate.ToString(DateFormat), 
+                TestDate,
+                TestDate.ToString(DateFormat),
                 DateFormat);
         }
 
@@ -120,7 +191,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         public void MapString_WhenDateTime_ThenSuccess()
         {
             MapString_WhenSimpleType_ThenSuccess(
-                TestDate.ToString(DateFormat), 
+                TestDate.ToString(DateFormat),
                 TestDate,
                 DateFormat);
         }
@@ -129,7 +200,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         public void MapObject_WhenInt_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
-                int.MaxValue, 
+                int.MaxValue,
                 int.MaxValue.ToString());
         }
 
@@ -183,7 +254,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         public void MapObject_WhenLong_ThenSuccess()
         {
             MapObject_WhenSimpleType_ThenSuccess(
-                long.MaxValue, 
+                long.MaxValue,
                 long.MaxValue.ToString());
         }
 
@@ -194,7 +265,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 new Dictionary<string, object>
                 {
                     ["this"] = long.MaxValue
-                },                
+                },
                 long.MaxValue.ToString());
         }
 
@@ -202,7 +273,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         public void MapString_WhenLong_ThenSuccess()
         {
             MapString_WhenSimpleType_ThenSuccess(
-                long.MaxValue.ToString(), 
+                long.MaxValue.ToString(),
                 long.MaxValue);
         }
 
@@ -281,7 +352,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 new Dictionary<string, object>
                 {
                     ["Property"] = guid
-                }, 
+                },
                 guid.ToString("N"));
         }
 
@@ -302,6 +373,54 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("charlie-delta", TestEnumEcho.CharlieDelta);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "charlie-delta");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_PascalCase_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("CharlieDelta", TestEnumEcho.CharlieDelta, "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_PascalCase_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "CharlieDelta", "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_CamelCase_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("charlieDelta", TestEnumEcho.CharlieDelta, "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_CamelCase_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "charlieDelta", "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_Integer_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("2", TestEnumEcho.CharlieDelta, "i");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_Integer_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "2", "i");
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapDictionary_WhenWrappedDashedGuid_ThenSuccess()
         {
             var guid = Guid.NewGuid();
@@ -310,7 +429,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 new Dictionary<string, object>
                 {
                     ["Property"] = guid
-                }, 
+                },
                 guid.ToString("D"), "D");
         }
 
@@ -339,7 +458,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                 new Dictionary<string, object>
                 {
                     ["Property"] = guid
-                }, 
+                },
                 guid.ToString("N"));
         }
 
@@ -390,7 +509,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             Assert.Equal("btc-usd", obj.CurrencyPair);
 
             Assert.Equal(
-                new DateTime(2017, 4, 4, 17, 37, 0, DateTimeKind.Utc), 
+                new DateTime(2017, 4, 4, 17, 37, 0, DateTimeKind.Utc),
                 obj.Time);
         }
 
@@ -475,6 +594,38 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             Assert.Equal("order-book-snapshots/coinbase-pro/btc-usd/2019-09-30/", actual);
         }
 
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_ImplicitOperatorConvertible_Success()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                new ImplicitConvertible("charlie", "delta"),
+                "charlie|delta");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_ImplicitOperatorConvertible_Success()
+        {
+            MapString_WhenObjectType_ThenSuccess(
+                "charlie|delta",
+                new ImplicitConvertible("charlie", "delta"));
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_ExplicitOperatorConvertible_Success()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                new ExplicitConvertible("charlie", "delta"),
+                "charlie|delta");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_ExplicitOperatorConvertible_Success()
+        {
+            MapString_WhenObjectType_ThenSuccess(
+                "charlie|delta",
+                new ExplicitConvertible("charlie", "delta"));
+        }
+
         [Fact, Trait("Type", "Speed")]
         public void MapObject_Guid_SpeedTest()
         {
@@ -486,7 +637,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
 
             var count = 0;
 
-            while(time.Elapsed.TotalSeconds < 5)
+            while (time.Elapsed.TotalSeconds < 5)
             {
                 var str = map.Map(value);
 
@@ -517,7 +668,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             while (time.Elapsed.TotalSeconds < 5)
             {
                 var str = map.Map(memberValues);
-                
+
                 count++;
             }
 
@@ -555,8 +706,8 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         public void MapObject_DateTime_SpeedTest()
         {
             var value = new DateTime(
-                2016, 7, 11, 
-                2, 3, 4, 
+                2016, 7, 11,
+                2, 3, 4,
                 DateTimeKind.Utc);
 
             var map = new StringMap<DateTime>("alfa/{this:yyyy/MM/dd/hh/mm/ss}/bravo");
@@ -674,11 +825,11 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
                     2, 3, 4,
                     DateTimeKind.Utc)
             };
-            
+
             var count = 0;
 
             var time = Stopwatch.StartNew();
-                        
+
             while (time.Elapsed.TotalSeconds < 5)
             {
                 var str = map.Map(memberValues);
@@ -711,7 +862,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             {
                 var obj = map.Map(str);
 
-               count++;
+                count++;
             }
 
             _testOutputHelper.WriteLine($"Rate: {count / time.Elapsed.TotalSeconds} / s");
@@ -775,6 +926,28 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             Assert.Equal(
                 value,
                 obj);
+
+            _testOutputHelper.WriteLine($"map: {map}");
+
+            _testOutputHelper.WriteLine($"str: {str}");
+        }
+
+        void MapString_WhenObjectType_ThenSuccess<TSimpleType>(
+            string stringValue,
+            TSimpleType value,
+            string format = null)
+        {
+            var map = new StringMap<TSimpleType>(string.IsNullOrWhiteSpace(format) ?
+                "alfa/{this}/bravo" :
+                $"alfa/{{this:{format}}}/bravo");
+
+            var str = $"alfa/{stringValue}/bravo";
+
+            var obj = map.Map(str);
+
+            Assert.Equal(
+                JsonConvert.SerializeObject(value),
+                JsonConvert.SerializeObject(obj));
 
             _testOutputHelper.WriteLine($"map: {map}");
 
@@ -920,7 +1093,7 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             _testOutputHelper.WriteLine($"str: {str}");
         }
 
-        class Wrapper<TType> 
+        class Wrapper<TType>
         {
             public TType Property { get; set; }
         }
@@ -980,6 +1153,60 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             public DateTime Date { get; }
 
             public DateTime? Time { get; }
+        }
+
+        enum TestEnumEcho
+        {
+            Unknown = 0,
+
+            AlfaBravo = 1,
+
+            CharlieDelta = 2
+        }
+
+        public class ImplicitConvertible
+        {
+            public ImplicitConvertible(
+                string alfa,
+                string bravo)
+            {
+                Alfa = alfa;
+                
+                Bravo = bravo;
+            }
+
+            public string Alfa { get; }
+            
+            public string Bravo { get; }
+
+            public static implicit operator string(ImplicitConvertible source) => $"{source.Alfa}|{source.Bravo}";
+
+            public static implicit operator ImplicitConvertible(string source) => new ImplicitConvertible(
+                source.Split('|')[0], 
+                source.Split('|')[1]);
+        }
+
+        public class ExplicitConvertible
+        {
+            public ExplicitConvertible(
+                string alfa,
+                string bravo)
+            {
+                Alfa = alfa;
+                Alfa = alfa;
+
+                Bravo = bravo;
+            }
+
+            public string Alfa { get; }
+
+            public string Bravo { get; }
+
+            public static explicit operator string(ExplicitConvertible source) => $"{source.Alfa}|{source.Bravo}";
+
+            public static explicit operator ExplicitConvertible(string source) => new ExplicitConvertible(
+                source.Split('|')[0],
+                source.Split('|')[1]);
         }
     }
 }
