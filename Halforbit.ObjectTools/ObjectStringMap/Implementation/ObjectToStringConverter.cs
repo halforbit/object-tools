@@ -78,6 +78,30 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                 return null;
             }
 
+            if (value.GetType().IsEnum)
+            {
+                if (string.IsNullOrWhiteSpace(format) || format.Equals("t", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return value.ToString().PascalToTrainCase();
+                }
+                else if (format.Equals("p", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return value.ToString();
+                }
+                else if (format.Equals("c", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return value.ToString().PascalToCamelCase();
+                }
+                else if (format.Equals("i", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return Convert.ChangeType(value, ((Enum)value).GetTypeCode()).ToString();
+                }
+                else
+                {
+                    throw new ArgumentException($"Unrecognized format string `{format}`, should be one of `c`, `p`, `c`, `i`");
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(format))
             {
                 var formattable = value as IFormattable;

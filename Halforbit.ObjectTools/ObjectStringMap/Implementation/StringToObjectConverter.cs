@@ -31,7 +31,33 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                         type = typeInfo.GenericTypeArguments[0];
                     }
 
-                    return Convert.ChangeType(stringValue, type);
+                    if (typeInfo.IsEnum)
+                    {
+                        if (string.IsNullOrWhiteSpace(format) || format.Equals("t", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return Enum.Parse(type, stringValue.TrainToPascalCase());
+                        }
+                        else if (format.Equals("p", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return Enum.Parse(type, stringValue);
+                        }
+                        else if (format.Equals("c", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return Enum.Parse(type, stringValue.CamelToPascalCase());
+                        }
+                        else if (format.Equals("i", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return Enum.Parse(type, stringValue);
+                        }
+                        else
+                        {
+                            throw new ArgumentException($"Unrecognized format string `{format}`, should be one of `c`, `p`, `c`, `i`");
+                        }
+                    }
+                    else
+                    {
+                        return Convert.ChangeType(stringValue, type);
+                    }
                 }
             }
             catch (Exception)

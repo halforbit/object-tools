@@ -34,6 +34,76 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "charlie-delta");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "charlie-delta",
+                TestEnumEcho.CharlieDelta);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_PascalCase_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "CharlieDelta",
+                "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_PascalCase_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "CharlieDelta",
+                TestEnumEcho.CharlieDelta,
+                "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_CamelCase_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "charlieDelta",
+                "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_CamelCase_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "charlieDelta",
+                TestEnumEcho.CharlieDelta,
+                "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenEnum_Integer_ThenSuccess()
+        {
+            MapObject_WhenSimpleType_ThenSuccess(
+                TestEnumEcho.CharlieDelta,
+                "2",
+                "i");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenEnum_Integer_ThenSuccess()
+        {
+            MapString_WhenSimpleType_ThenSuccess(
+                "2",
+                TestEnumEcho.CharlieDelta,
+                "i");
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapDictionary_WhenString_ThenSuccess()
         {
             MapDictionary_WhenSimpleType_ThenSuccess<string>(
@@ -299,6 +369,54 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             var guid = Guid.NewGuid();
 
             MapObject_WhenWrappedType_ThenSuccess(guid, guid.ToString("D"), "D");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("charlie-delta", TestEnumEcho.CharlieDelta);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "charlie-delta");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_PascalCase_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("CharlieDelta", TestEnumEcho.CharlieDelta, "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_PascalCase_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "CharlieDelta", "p");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_CamelCase_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("charlieDelta", TestEnumEcho.CharlieDelta, "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_CamelCase_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "charlieDelta", "c");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenWrappedEnum_Integer_ThenSuccess()
+        {
+            MapString_WhenWrappedType_ThenSuccess("2", TestEnumEcho.CharlieDelta, "i");
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenWrappedEnum_Integer_ThenSuccess()
+        {
+            MapObject_WhenWrappedType_ThenSuccess(TestEnumEcho.CharlieDelta, "2", "i");
         }
 
         [Fact, Trait("Type", "Unit")]
@@ -980,6 +1098,15 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             public DateTime Date { get; }
 
             public DateTime? Time { get; }
+        }
+
+        enum TestEnumEcho
+        {
+            Unknown = 0,
+
+            AlfaBravo = 1,
+
+            CharlieDelta = 2
         }
     }
 }
