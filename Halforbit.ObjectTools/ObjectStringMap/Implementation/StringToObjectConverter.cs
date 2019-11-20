@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
@@ -54,9 +55,23 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                             throw new ArgumentException($"Unrecognized format string `{format}`, should be one of `c`, `p`, `c`, `i`");
                         }
                     }
-                    else
+                    else 
                     {
-                        return Convert.ChangeType(stringValue, type);
+                        var op = type
+                            .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                            .FirstOrDefault(m => (m.Name == "op_Explicit" || m.Name == "op_Implicit") &&
+                                m.ReturnType.Equals(type) &&
+                                m.GetParameters().Length == 1 &&
+                                m.GetParameters().Single().ParameterType.Equals(typeof(string)));
+
+                        if (op != null)
+                        {
+                            return op.Invoke(null, new object[] { stringValue });
+                        }
+                        else
+                        {
+                            return Convert.ChangeType(stringValue, type);
+                        }
                     }
                 }
             }

@@ -119,6 +119,49 @@ namespace Halforbit.ObjectTools.Benchmarks
             _ = _immutableDateTimeStringMap.Map(_immutableDateString);
         }
 
+        static readonly ImplicitConvertible _implicitConvertible = new ImplicitConvertible("bravo", "charlie");
+
+        static readonly string _implicitConvertibleString = $"alfa/bravo|charlie/delta";
+
+        static readonly StringMap<ImplicitConvertible> _implicitConvertibleMap = "alfa/{this}/delta";
+
+        [Benchmark]
+        public void MapObject_ImplicitConvertible()
+        {
+            _ = _implicitConvertibleMap.Map(_implicitConvertible);
+        }
+
+        [Benchmark]
+        public void MapString_ImplicitConvertible()
+        {
+            _ = _implicitConvertibleMap.Map(_implicitConvertibleString);
+        }
+
+        class ImplicitConvertible
+        {
+            public ImplicitConvertible(
+                string alfa,
+                string bravo)
+            {
+                Alfa = alfa;
+
+                Bravo = bravo;
+            }
+
+            public string Alfa { get; }
+
+            public string Bravo { get; }
+
+            public static implicit operator string(ImplicitConvertible source) => $"{source.Alfa}|{source.Bravo}";
+
+            public static implicit operator ImplicitConvertible(string source)
+            {
+                var parts = source.Split('|');
+            
+                return new ImplicitConvertible(parts[0], parts[1]);
+            }
+        }
+
         class Immutable<TType>
         {
             public Immutable(TType property)

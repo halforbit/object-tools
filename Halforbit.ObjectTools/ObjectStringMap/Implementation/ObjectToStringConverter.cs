@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 {
@@ -117,6 +118,20 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             if (value is Guid)
             {
                 return ((Guid)value).ToString("N");
+            }
+
+            var type = value.GetType();
+
+            var op = type
+                .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                .FirstOrDefault(m => (m.Name == "op_Explicit" || m.Name == "op_Implicit") &&
+                    m.ReturnType.Equals(typeof(string)) &&
+                    m.GetParameters().Length == 1 &&
+                    m.GetParameters().Single().ParameterType.Equals(type));
+
+            if (op != null)
+            {
+                return (string)op.Invoke(null, new object[] { value });
             }
 
             return value.ToString();
