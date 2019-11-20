@@ -19,7 +19,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<DateTime> _dateTimeDictionaryMap = new StringMap<DateTime>("alfa/{this:yyyy/MM/dd/hh/mm/ss}/bravo");
 
         [Benchmark]
-        public void MapDictionary_DateTime_SpeedTest()
+        public void MapDictionary_DateTime()
         {
             _ = _dateTimeDictionaryMap.Map(_dateTimeDictionary);
         }
@@ -32,7 +32,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<Guid> _guidDictionaryMap = new StringMap<Guid>("alfa/{this}/bravo");
 
         [Benchmark]
-        public void MapDictionary_Guid_SpeedTest()
+        public void MapDictionary_Guid()
         {
             _ = _guidDictionaryMap.Map(_guidDictionary);
         }
@@ -48,7 +48,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<Immutable<DateTime>> _immutableDateTimeDictionaryMap = new StringMap<Immutable<DateTime>>("alfa/{Property:yyyy/MM/dd/hh/mm/ss}/bravo");
 
         [Benchmark]
-        public void MapDictionary_ImmutableDateTime_SpeedTest()
+        public void MapDictionary_ImmutableDateTime()
         {
             _ = _immutableDateTimeDictionaryMap.Map(_immutableDateTimeDictionary);
         }
@@ -61,7 +61,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<DateTime> _dateTimeMap = new StringMap<DateTime>("alfa/{this:yyyy/MM/dd/hh/mm/ss}/bravo");
 
         [Benchmark]
-        public void MapObject_DateTime_SpeedTest()
+        public void MapObject_DateTime()
         {
             _ = _dateTimeMap.Map(_dateTime);
         }
@@ -71,7 +71,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<Guid> _guidMap = new StringMap<Guid>("alfa/{this}/bravo");
 
         [Benchmark]
-        public void MapObject_Guid_SpeedTest()
+        public void MapObject_Guid()
         {
             _ = _guidMap.Map(_guid);
         }
@@ -84,7 +84,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<Immutable<DateTime>> _immutableDateTimeMap = new StringMap<Immutable<DateTime>>("alfa/{Property:yyyy/MM/dd/hh/mm/ss}/bravo");
 
         [Benchmark]
-        public void MapObject_ImmutableDateTime_SpeedTest()
+        public void MapObject_ImmutableDateTime()
         {
             _ = _immutableDateTimeMap.Map(_immutableDateTime);
         }
@@ -94,7 +94,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<DateTime> _dateTimeStringMap = new StringMap<DateTime>("alfa/{this:yyyy/MM/dd/hh/mm/ss}/bravo");
 
         [Benchmark]
-        public void MapString_DateTime_SpeedTest()
+        public void MapString_DateTime()
         {
             _ = _dateTimeStringMap.Map(_dateTimeString);
         }
@@ -104,7 +104,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<Guid> _guidStringMap = new StringMap<Guid>("alfa/{this}/bravo");
             
         [Benchmark]
-        public void MapString_Guid_SpeedTest()
+        public void MapString_Guid()
         {
             _ = _guidStringMap.Map(_guidString);
         }
@@ -114,7 +114,7 @@ namespace Halforbit.ObjectTools.Benchmarks
         static readonly StringMap<Immutable<DateTime>> _immutableDateTimeStringMap = new StringMap<Immutable<DateTime>>("alfa/{Property:yyyy/MM/dd/hh/mm/ss}/bravo");
 
         [Benchmark]
-        public void MapString_ImmutableDateTime_SpeedTest()
+        public void MapString_ImmutableDateTime()
         {
             _ = _immutableDateTimeStringMap.Map(_immutableDateString);
         }
