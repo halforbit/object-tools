@@ -38,6 +38,8 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
             object obj,
             string name)
         {
+            if (obj == null) return null;
+
             var type = obj.GetType();
 
             if (name == ThisKeyword)
