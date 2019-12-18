@@ -32,7 +32,7 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                         type = typeInfo.GenericTypeArguments[0];
                     }
 
-                    if (typeInfo.IsEnum)
+                    if (type.IsEnum)
                     {
                         if (string.IsNullOrWhiteSpace(format) || format.Equals("t", StringComparison.InvariantCultureIgnoreCase))
                         {
