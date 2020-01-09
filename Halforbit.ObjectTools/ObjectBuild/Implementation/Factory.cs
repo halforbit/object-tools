@@ -69,12 +69,15 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
 
                 if(properties.Any())
                 {
+                    var property = properties[key];
+
                     arguments.Add(BuildPropertyArgumentExpression(
                         dictionaryParameter,
                         sourceParameter,
                         getOrAddMethodInfo,
                         key,
-                        properties[key]));
+                        property,
+                        parameterType));
                 }
                 else
                 {
@@ -83,7 +86,8 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                         sourceParameter,
                         getOrAddMethodInfo,
                         key,
-                        fields[key]));
+                        fields[key],
+                        parameterType));
                 }
 
                 propertiesToSet.Remove(key);
@@ -105,7 +109,8 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                             sourceParameter,
                             getOrAddMethodInfo,
                             p.Key,
-                            p.Value)))
+                            p.Value,
+                            p.Value.PropertyType)))
                     .ToList();
 
                 outerExpression = Expression.MemberInit(newExpression, memberBindings);
@@ -124,7 +129,8 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
             ParameterExpression sourceParameter,
             MethodInfo getOrAddMethodInfo,
             string key,
-            PropertyInfo propertyInfo)
+            PropertyInfo propertyInfo,
+            Type parameterType)
         {
             var propertyType = propertyInfo.PropertyType;
 
@@ -143,7 +149,7 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                                 sourceParameter,
                                 propertyInfo)),
                         typeof(object))),
-                propertyType);
+                parameterType);
         }
 
         static UnaryExpression BuildFieldArgumentExpression(
@@ -151,10 +157,9 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
             ParameterExpression sourceParameter,
             MethodInfo getOrAddMethodInfo,
             string key,
-            FieldInfo fieldInfo)
+            FieldInfo fieldInfo,
+            Type parameterType)
         {
-            var fieldType = fieldInfo.FieldType;
-
             return Expression.Convert(
                 Expression.Call(
                     dictionaryParameter,
@@ -165,7 +170,7 @@ namespace Halforbit.ObjectTools.ObjectBuild.Implementation
                             sourceParameter,
                             fieldInfo),
                         typeof(object))),
-                fieldType);
+                parameterType);
         }
     }
 }

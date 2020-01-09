@@ -141,6 +141,18 @@ namespace Halforbit.ObjectTools.Tests.ObjectBuild
             Assert.Equal(fileKeyA.CreateTime, fileKeyB.CreateTime);
         }
 
+        [Fact, Trait("Type", "Unit")]
+        public void Build_WithConstructorOnlyNullable_Success()
+        {
+            var a = new ConstructorOnlyNullable(Guid.NewGuid(), null);
+
+            var b = new Builder<ConstructorOnlyNullable>(a)
+                .Set(o => o.GuidProp, Guid.NewGuid())
+                .Build();
+
+            Assert.Equal(false, b.BoolProp);
+        }
+
         public class ImmutableFileKey
         {
             public ImmutableFileKey(
@@ -175,6 +187,22 @@ namespace Halforbit.ObjectTools.Tests.ObjectBuild
             public int? AccountId { get; set; }
 
             public DateTime? CreateTime { get; set; }
+        }
+
+        public class ConstructorOnlyNullable
+        {
+            public ConstructorOnlyNullable(
+                Guid guidProp = default(Guid),
+                bool? boolProp = default(bool?))
+            {
+                GuidProp = guidProp;
+
+                BoolProp = boolProp ?? false;
+            }
+
+            public Guid GuidProp { get; }
+
+            public bool BoolProp { get; }
         }
     }
 }
