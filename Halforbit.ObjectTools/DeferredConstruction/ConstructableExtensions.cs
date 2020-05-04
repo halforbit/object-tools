@@ -129,7 +129,8 @@ namespace Halforbit.ObjectTools.DeferredConstruction
             {
                 var parameter = parameters[i];
 
-                if (!argumentConstructables.TryGetValue(parameter.Name, out var argumentConstructable))
+                if (!argumentConstructables.TryGetValue(parameter.Name, out var argumentConstructable) && 
+                    !parameter.IsOptional)
                 {
                     throw new ArgumentException(
                         $"Constructor for type `{typeName}` requires parameter `{parameter.Name}` " +
