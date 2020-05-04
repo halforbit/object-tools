@@ -10,9 +10,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{50116D58-2D21-41AA-A89C-18E1EB88D9E4}"
 	ProjectSection(SolutionItems) = preProject
 		readme.md = readme.md
+		release-notes.md = release-notes.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Halforbit.ObjectTools.Benchmarks", "Halforbit.ObjectTools.Benchmarks\Halforbit.ObjectTools.Benchmarks.csproj", "{E2F53F48-2360-45AD-8A9A-36D76276A1E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Halforbit.ObjectTools.Benchmarks", "Halforbit.ObjectTools.Benchmarks\Halforbit.ObjectTools.Benchmarks.csproj", "{E2F53F48-2360-45AD-8A9A-36D76276A1E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
