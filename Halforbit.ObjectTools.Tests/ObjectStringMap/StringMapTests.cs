@@ -1,5 +1,6 @@
 ﻿using Halforbit.ObjectTools.ObjectStringMap.Implementation;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +26,80 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         {
             _testOutputHelper = testOutputHelper;
         }
+
+        //
+
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum TargetAdPlatform
+        {
+            Unknown = 0,
+            GoogleAdWords,
+            MicrosoftBing
+        }
+
+        public class CallExtensionOverride
+        {
+            public CallExtensionOverride(
+                Guid accountId,
+                TargetAdPlatform adPlatform)
+            {
+                AccountId = accountId;
+                AdPlatform = adPlatform;
+            }
+
+            public Guid AccountId { get; }
+
+            public TargetAdPlatform AdPlatform { get; }
+
+            public class Key : IEquatable<Key>
+            {
+                public Key(
+                    Guid? accountId = null,
+                    TargetAdPlatform? adPlatform = null)
+                {
+                    AccountId = accountId;
+                    AdPlatform = adPlatform;
+                }
+
+                public Guid? AccountId { get; }
+
+                public TargetAdPlatform? AdPlatform { get; }
+
+                #region IEquatable<Key> Members
+                public bool Equals(Key other)
+                {
+                    return other != null &&
+                           EqualityComparer<Guid?>.Default.Equals(AccountId, other.AccountId) &&
+                           EqualityComparer<TargetAdPlatform?>.Default.Equals(AdPlatform, other.AdPlatform);
+                }
+                public override bool Equals(object obj)
+                {
+                    return Equals(obj as Key);
+                }
+
+                public override int GetHashCode()
+                {
+                    var hashCode = 2035860012;
+                    hashCode = hashCode * -1521134295 + EqualityComparer<Guid?>.Default.GetHashCode(AccountId);
+                    hashCode = hashCode * -1521134295 + EqualityComparer<TargetAdPlatform?>.Default.GetHashCode(AdPlatform);
+                    return hashCode;
+                }
+
+                #endregion
+            }
+        }
+
+        [Fact]
+        public void TestWeirdThing()
+        {
+            var s = "call-extensions/account-id/0006124a2c1d4c11b71a7c2d50d09d12/GoogleAdWords";
+
+            var m = new StringMap<CallExtensionOverride.Key>("call-extensions/account-id/{AccountId}/{AdPlatform:P}");
+
+            var r = m.Map(s);
+        }
+
+        //
 
         [Fact, Trait("Type", "Unit")]
         public void MapObject_WhenString_ThenSuccess()
@@ -624,6 +699,26 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
             MapString_WhenObjectType_ThenSuccess(
                 "charlie|delta",
                 new ExplicitConvertible("charlie", "delta"));
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_NullDateTime_Success()
+        {
+            StringMap<DateTime?> map = "snapshot-times/{this:yyyy/MM/dd/HH/mm/ss}";
+
+            var actual = map.Map(null as DateTime?, true);
+
+            Assert.Equal("snapshot-times/", actual);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_NullDateTime_Success()
+        {
+            StringMap<DateTime?> map = "snapshot-times/{this:yyyy/MM/dd/HH/mm/ss}";
+
+            var actual = map.Map("snapshot-times/");
+
+            Assert.Equal(null, actual);
         }
 
         [Fact, Trait("Type", "Speed")]
