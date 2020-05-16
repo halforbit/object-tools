@@ -2,6 +2,12 @@
 
 ## Release Notes
 
+### 2020-05-15
+
+#### 1.1.8
+
+- Added `ArgumentItem<TItem>` method to `ConstructableExtensions` methods, which allows argument values to be accumulated in a list of items (instead of a single value) across multiple calls.
+
 ### 2020-05-04
 
 #### 1.1.7

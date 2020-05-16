@@ -57,6 +57,37 @@ namespace Halforbit.ObjectTools.DeferredConstruction
                 value: constructable.Value);
         }
 
+        public static Constructable ArgumentItem<TItem>(
+            this Constructable constructable,
+            string name,
+            TItem argumentValue)
+        {
+            List<TItem> list;
+
+            if (constructable.Arguments.TryGetValue(name, out var value))
+            {
+                var existing = value.Value as IReadOnlyList<TItem>;
+
+                list = existing.ToList();
+
+                list.Add(argumentValue);
+            }
+            else
+            {
+                list = new List<TItem> { argumentValue };
+            }
+
+            return new Constructable(
+                type: constructable.Type,
+                typeArguments: constructable.TypeArguments,
+                arguments: constructable.Arguments.Set(name, new Constructable(
+                    type: null,
+                    typeArguments: null,
+                    arguments: null,
+                    value: list)),
+                value: constructable.Value);
+        }
+
         public static Constructable Argument(
             this Constructable constructable,
             string name,
