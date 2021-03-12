@@ -130,6 +130,27 @@ namespace Halforbit.ObjectTools.Tests.InvariantExtraction
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void ExtractInvariantDictionary_EnumPartitioned_WhenSomeInvariant_ThenSomeInvariantValue()
+        {
+            var accountId = 123;
+
+            var createTime = new DateTime(
+                2016, 7, 10,
+                1, 2, 3,
+                DateTimeKind.Utc);
+
+            Expression<Func<EnumPartitionedFileKey, bool>> redacted;
+
+            var invariant = new InvariantExtractor().ExtractInvariantDictionary(
+                c => c.PartitionId == TestEnum.Bravo && c.AccountId == accountId && c.CreateTime < createTime,
+                out redacted);
+
+            Assert.Equal(1, invariant.Count);
+
+            Assert.Equal(accountId, invariant["AccountId"]);
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void ExtractInvariantDictionary_WhenNoInvariants_ThenNoValues()
         {
             var accountId = new Random().Next();
@@ -202,6 +223,23 @@ namespace Halforbit.ObjectTools.Tests.InvariantExtraction
 
         class FileKey
         {
+            public int? AccountId { get; set; }
+
+            public DateTime? CreateTime { get; set; }
+        }
+
+        enum TestEnum
+        { 
+            Unknown = 0,
+            Alfa,
+            Bravo,
+            Charlie
+        }
+
+        class EnumPartitionedFileKey
+        {
+            public TestEnum PartitionId { get; set; }
+
             public int? AccountId { get; set; }
 
             public DateTime? CreateTime { get; set; }

@@ -199,6 +199,66 @@ namespace Halforbit.ObjectTools.Tests.ObjectStringMap
         }
 
         [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenTuple_ThenSuccess()
+        {
+            var key = (PartitionKey: "123", RecordId: "456");
+
+            var map = new StringMap<(string PartitionKey, string RecordId)>("{PartitionKey}|things/{RecordId}");
+            
+            var str = map.Map(key);
+
+            Assert.Equal(
+                $"{key.PartitionKey}|things/{key.RecordId}",
+                str);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenTuple_ThenSuccess()
+        {
+            var key = (PartitionKey: "123", RecordId: "456");
+
+            var str = $"{key.PartitionKey}|things/{key.RecordId}";
+
+            var map = new StringMap<(string PartitionKey, string RecordId)>("{PartitionKey}|things/{RecordId}");
+            
+            var r = map.Map(str);
+
+            Assert.Equal(key.PartitionKey, r.PartitionKey);
+
+            Assert.Equal(key.RecordId, r.RecordId);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapString_WhenAnonymousTuple_ThenSuccess()
+        {
+            var key = ("123", "456");
+
+            var map = new StringMap<(string, string)>("{Item1}|things/{Item2}");
+
+            var str = map.Map(key);
+
+            Assert.Equal(
+                $"{key.Item1}|things/{key.Item2}",
+                str);
+        }
+
+        [Fact, Trait("Type", "Unit")]
+        public void MapObject_WhenAnonymousTuple_ThenSuccess()
+        {
+            var key = ("123", "456");
+
+            var str = $"{key.Item1}|things/{key.Item2}";
+
+            var map = new StringMap<(string, string)>("{Item1}|things/{Item2}");
+
+            var r = map.Map(str);
+
+            Assert.Equal(key.Item1, r.Item1);
+
+            Assert.Equal(key.Item2, r.Item2);
+        }
+
+        [Fact, Trait("Type", "Unit")]
         public void MapDictionary_WhenString_WildcardTail_ThenSuccess()
         {
             var key = "charlie/delta/bravo.jpg";

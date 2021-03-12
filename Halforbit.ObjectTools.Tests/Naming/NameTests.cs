@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace PureCars.ObjectTools.Tests
+namespace Halforbit.ObjectTools.Tests
 {
     public class NameTests
     {
