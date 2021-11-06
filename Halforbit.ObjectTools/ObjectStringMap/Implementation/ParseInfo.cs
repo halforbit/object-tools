@@ -82,7 +82,9 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
         static void ValidateSource(string source)
         {
-            int nesting = 0;
+            var nesting = 0;
+
+            var lastOpen = 0;
 
             for (var i = 0; i < source.Length; i++)
             {
@@ -92,11 +94,13 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                 {
                     case '{': 
                         
-                        nesting++; 
-                        
+                        nesting++;
+
+                        lastOpen = i;
+
                         if (nesting > 1)
                         {
-                            throw new ArgumentException($"Unexpected extra `{{` in map `{source}`.");
+                            throw new ArgumentException($"Unexpected extra `{{` at position {i} of map `{source}`.");
                         }
 
                         break;
@@ -116,7 +120,8 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
             if (nesting > 0)
             {
-                throw new ArgumentException($"Opening `{{` is missing a closing `}}` in map `{source}`.");
+                throw new ArgumentException(
+                    $"Opening `{{` at position {lastOpen} is missing a closing `}}` in map `{source}`.");
             }
         }
 
