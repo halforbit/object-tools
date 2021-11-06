@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -30,6 +31,8 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
         public static ParseInfo ResolveParseInfo(string source)
         {
+            ValidateSource(source);
+
             var pattern = new StringBuilder();
 
             var nodeMatches = NodePattern.Matches(source).Cast<Match>();
@@ -75,6 +78,46 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
                 RegexOptions.Compiled);
 
             return new ParseInfo(formats, regex);
+        }
+
+        static void ValidateSource(string source)
+        {
+            int nesting = 0;
+
+            for (var i = 0; i < source.Length; i++)
+            {
+                var c = source[i];
+
+                switch (c)
+                {
+                    case '{': 
+                        
+                        nesting++; 
+                        
+                        if (nesting > 1)
+                        {
+                            throw new ArgumentException($"Unexpected extra `{{` in map `{source}`.");
+                        }
+
+                        break;
+
+                    case '}': 
+                        
+                        nesting--;
+
+                        if (nesting < 0)
+                        {
+                            throw new ArgumentException($"Unexpected `}}` at position {i} of map `{source}`.");
+                        }
+
+                        break;
+                }
+            }
+
+            if (nesting > 0)
+            {
+                throw new ArgumentException($"Opening `{{` is missing a closing `}}` in map `{source}`.");
+            }
         }
 
         static string ResolvePattern(string name, int slashCount)

@@ -77,6 +77,14 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
 
                     var field = typeInfo.GetField(name);
 
+                    if (property == null && field == null)
+                    {
+                        throw new ArgumentException(
+                            $"Cannot map string to type `{typeInfo.Name}` " +
+                            $"because it does not have a property or field named `{name}` " +
+                            $"which is referenced by the map `{Source}`.");
+                    }
+
                     var value = match.Groups[name].Value;
 
                     format = parseInfo.Formats.TryGetValue(name, out format) ? format : null;
