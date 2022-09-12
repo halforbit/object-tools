@@ -4,7 +4,7 @@
 
 ### 2022-09-12
 
-#### 1.1.18
+#### 1.1.20
 
 - Added `StringExpressionConverter` which allows defining string maps using a lambda expression over a string interpolation in the form `k => $"forecasts/{k.PostalCode}/{k.Date:yyyy/MM/dd}"`.
 
