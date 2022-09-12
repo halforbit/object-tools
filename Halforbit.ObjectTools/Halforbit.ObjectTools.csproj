@@ -9,14 +9,7 @@
     <PackageProjectUrl>http://github.com/halforbit/object-tools</PackageProjectUrl>
     <RepositoryUrl>http://github.com/halforbit/object-tools</RepositoryUrl>
     <Version>1.0.22</Version>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>7.1</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
