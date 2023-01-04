@@ -10,26 +10,67 @@ public class StringExpressionConverter
     {
         var body = expression.Body;
 
-        if (body is ConstantExpression c)
+        if (body is ConstantExpression constant)
         {
-            return c.Value.ToString();
+            return constant.Value.ToString();
         }
 
-        if (body is MethodCallExpression m)
+        if (body is MethodCallExpression methodCall)
         {
-            if (m.Method.DeclaringType == typeof(string) && m.Method.Name == nameof(string.Format))
+            if (methodCall.Method.DeclaringType == typeof(string) && 
+                methodCall.Method.Name == nameof(string.Format))
             {
-                var formatString = (m.Arguments[0] as ConstantExpression).Value.ToString();
+                var formatString = (methodCall.Arguments[0] as ConstantExpression).Value.ToString();
 
-                var args = new Expression[m.Arguments.Count - 1];
+                var args = default(Expression[]);
 
-                for (var i = 0; i < args.Length; i++)
+                if (methodCall.Arguments[1] is NewArrayExpression newArray)
                 {
-                    var src = m.Arguments[i + 1] as UnaryExpression;
+                    args = new Expression[newArray.Expressions.Count];
 
-                    if (src == null) throw ShapeError();
+                    for (var i = 0; i < newArray.Expressions.Count; i++)
+                    {
+                        switch (newArray.Expressions[i])
+                        {
+                            case UnaryExpression unary:
 
-                    args[i] = src.Operand;
+                                args[i] = unary.Operand;
+
+                                break;
+
+                            case MemberExpression member:
+
+                                args[i] = member;
+
+                                break;
+
+                            default: throw ShapeError();
+                        }
+                    }
+                }
+                else
+                {
+                    args = new Expression[methodCall.Arguments.Count - 1];
+
+                    for (var i = 0; i < args.Length; i++)
+                    {
+                        switch (methodCall.Arguments[i + 1])
+                        {
+                            case UnaryExpression unary:
+
+                                args[i] = unary.Operand;
+
+                                break;
+
+                            case MemberExpression member:
+
+                                args[i] = member;
+
+                                break;
+
+                            default: throw ShapeError();
+                        }
+                    }
                 }
 
                 return ConvertFormatString(formatString, args);
