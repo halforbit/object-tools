@@ -3,6 +3,7 @@ using Halforbit.ObjectTools.ObjectStringMap.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -26,6 +27,9 @@ namespace Halforbit.ObjectTools.ObjectStringMap.Implementation
         public Regex Regex => _parseInfo.Value.Regex;
 
         public static implicit operator StringMap<TObject>(string source) => new StringMap<TObject>(source);
+
+        public static implicit operator StringMap<TObject>(Expression<Func<TObject, string>> source) => 
+            new StringMap<TObject>(StringExpressionConverter.Convert(source));
 
         public static implicit operator string(StringMap<TObject> stringMap) => stringMap?.Source;
 

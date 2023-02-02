@@ -2,6 +2,12 @@
 
 ## Release Notes
 
+### 2023-02-02
+
+#### 1.1.25
+
+- Added implicit conversion to `StringMap<TObject>` from an `Expression<Func<TObject, string>>`.
+
 ### 2022-09-12
 
 #### 1.1.22
