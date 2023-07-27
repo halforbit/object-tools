@@ -2,6 +2,12 @@
 
 ## Release Notes
 
+### 2023-07-27
+
+#### 1.1.26
+
+- Add documentation for `Name<T>`.
+
 ### 2023-02-02
 
 #### 1.1.25

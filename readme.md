@@ -8,6 +8,8 @@ This is a small collection of tools for manipulating objects.
 
 - **[Object String Map](Halforbit.ObjectTools/ObjectStringMap/object-string-map.md)** - Use a text map to turn simple objects into strings and back again. 
 
+- **[Introducing `Name<T>`](Halforbit.ObjectTools/Naming/introducing-name.md)** - Kick enums to the curb with url/path-friendly names that can be hierarchically nested.
+
 ## Nuget
 
 [Halforbit.ObjectTools](https://www.nuget.org/packages/Halforbit.ObjectTools/) is available as a .NET Standard Nuget package:
