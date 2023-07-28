@@ -60,7 +60,7 @@ Name<Animal> lightningBug = name;
 
 ### Compare two `Name<T>`s
 
-`Name<T>` implements (in)equality checks, and can be compared with `==` and `!=`.
+`Name<T>` implements (in)equality checks with other `Name<T>`s, and can be compared with `==` and `!=`.
 
 ```cs
 Name<Animal> animalA = "insect.lightning-bug";
@@ -68,6 +68,14 @@ Name<Animal> animalA = "insect.lightning-bug";
 Name<Animal> animalB = typeof(Animal.Insect.LightningBug);
 
 bool areEqual = animalA == animalB; // == true
+```
+
+### Compare a `Name<T>` to a `Type`
+
+`Name<T>` implements (in)equality checks with `Type`, and can be compared with `==` and `!=`.
+
+```cs
+bool areEqual = (Name<Animal>)"cat" == typeof(Animal.Mammal.Cat); // == true
 ```
 
 ## JSON Serialization

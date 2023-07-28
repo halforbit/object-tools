@@ -4,6 +4,10 @@
 
 ### 2023-07-27
 
+#### 1.1.27
+
+- Added more detail to `Name<T>` documentation
+
 #### 1.1.26
 
 - Add documentation for `Name<T>`.
